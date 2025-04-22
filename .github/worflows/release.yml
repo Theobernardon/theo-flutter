@@ -1,0 +1,62 @@
+name: 📦 Release Flutter
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  detect-builds:
+    runs-on: ubuntu-latest
+    outputs:
+      platforms: ${{ steps.extract.outputs.platforms }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: extract
+        run: |
+          platforms=$(grep -A 10 '^build:' build.yml | grep '-' | awk '{print $2}' | paste -sd "," -)
+          echo "platforms=[$platforms]" >> $GITHUB_OUTPUT
+
+  build:
+    needs: detect-builds
+    strategy:
+      matrix:
+        platform: ${{ fromJson(needs.detect-builds.outputs.platforms) }}
+    runs-on: ${{ 
+      matrix.platform == 'windows' && 'windows-latest' || 
+      (matrix.platform == 'macos' || matrix.platform == 'ios') && 'macos-latest' || 
+      'ubuntu-latest' 
+    }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.platform }}
+        uses: theobernardon/theo-flutter/actions/build/${{ matrix.platform }}@main
+
+      - name: Upload ${{ matrix.platform }} artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            build/**/outputs/**/*.apk
+            build/web.zip
+            build/windows/**/Release/*.exe
+            build/linux/**/release/*
+            build/macos/Build/**/*.app
+            build/ios/iphoneos/*.app
+            build/ios/ipa/*.ipa
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-files
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release-files/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
