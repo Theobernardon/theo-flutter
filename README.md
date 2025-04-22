@@ -1,4 +1,4 @@
-# theo-flutter-actions
+# theo-flutter
 
 Centralisation des GitHub Actions et workflows pour les projets Flutter.
 
@@ -30,7 +30,7 @@ Installe Flutter et exécute :
 - `flutter test`
 
 ```yaml
-- uses: theobernardon/theo-flutter-actions/actions/test@main
+- uses: theobernardon/theo-flutter/actions/test@main
 ```
 
 ---
@@ -50,7 +50,7 @@ Compile l'application Flutter pour une plateforme spécifique.
 #### Utilisation générale :
 
 ```yaml
-- uses: theobernardon/theo-flutter-actions/actions/build/<platform>@main
+- uses: theobernardon/theo-flutter/actions/build/<platform>@main
   with:
     flutter-version: "stable" # Optionnel, par défaut "stable"
 ```
@@ -58,7 +58,7 @@ Compile l'application Flutter pour une plateforme spécifique.
 #### Exemple concret :
 
 ```yaml
-- uses: theobernardon/theo-flutter-actions/actions/build/android@main
+- uses: theobernardon/theo-flutter/actions/build/android@main
 ```
 
 ---
@@ -74,7 +74,7 @@ Automatise la gestion des issues à partir de commentaires GitHub :
 | `/close` | Ferme l’issue et la passe dans "Done" |
 
 ```yaml
-- uses: theobernardon/theo-flutter-actions/actions/manage-issues@main
+- uses: theobernardon/theo-flutter/actions/manage-issues@main
   with:
     project-name: "NomDeTonProjet"
 ```
@@ -109,7 +109,7 @@ on:
 
 jobs:
   release:
-    uses: theobernardon/theo-flutter-actions/.github/workflows/release.yml@main
+    uses: theobernardon/theo-flutter/.github/workflows/release.yml@main
 ```
 
 ### Ce que fait ce workflow :
