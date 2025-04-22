@@ -1,58 +1,36 @@
 # theo-flutter-actions
-Centralisation des github actions pour les projets flutteurs
 
-## Actions disponibles
+Centralisation des GitHub Actions et workflows pour les projets Flutter.
 
-### 🧠 manage-issues
+Ce dépôt contient à la fois :
 
-Automatise la gestion des issues et leur positionnement dans un projet GitHub à partir de commentaires saisis directement dans les issues.
-
-#### Commandes supportées :
-- `/open` → Déplace l'issue dans la colonne **In Progress**
-- `/test` → Déplace l'issue dans la colonne **In Test**
-- `/close` → Ferme l'issue et la déplace dans la colonne **Done**
-
-#### Paramètres :
-- `project-name` : nom exact du projet GitHub (classique) lié au dépôt
-- `column-open` : (optionnel, par défaut `"In Progress"`)
-- `column-test` : (optionnel, par défaut `"In Test"`)
-- `column-close` : (optionnel, par défaut `"Done"`)
-
-#### Exemple d’utilisation :
-
-```yaml
-name: Gérer les commentaires d’issues
-
-on:
-  issue_comment:
-    types: [created]
-
-jobs:
-  manage:
-    if: github.event.issue.pull_request == null
-    runs-on: ubuntu-latest
-    steps:
-      - uses: theobernardon/theo-flutter-actions/manage-issues@main
-        with:
-          project-name: "NomExactDeTonProjet"
-          column-open: "In Progress"
-          column-test: "In Test"
-          column-close: "Done"
-```
-
-> 💡 Cette action fonctionne uniquement avec les **projets GitHub classiques (Projects v1)** liés au dépôt. Elle ne prend pas encore en charge les projets Beta (v2).
+- des **actions modulaires** (`test`, `build`, `manage-issues`) utilisables dans tous tes projets Flutter
+- des **workflows réutilisables** pour automatiser des étapes clés comme les releases
 
 ---
+
+## 📂 Structure du dépôt
+
+| Dossier                      | Rôle                                                        |
+|------------------------------|-------------------------------------------------------------|
+| `actions/test/`              | Tests automatiques (`flutter test`, `analyze`, etc.)        |
+| `actions/build/<platform>/`  | Build spécifique à une plateforme (`android`, `web`, etc.)  |
+| `actions/manage-issues/`     | Gestion d’issues via `/open`, `/test`, `/close`            |
+| `.github/workflows/`         | Workflows réutilisables (`release.yml`, etc.)              |
+
+---
+
+## ✅ Actions disponibles (`actions/`)
 
 ### 🧪 test
 
 Installe Flutter et exécute :
-- flutter pub get
-- flutter analyze
-- flutter test
+- `flutter pub get`
+- `flutter analyze`
+- `flutter test`
 
 ```yaml
-- uses: theobernardon/theo-flutter-actions/test@main
+- uses: theobernardon/theo-flutter-actions/actions/test@main
 ```
 
 ---
@@ -69,23 +47,86 @@ Compile l'application Flutter pour une plateforme spécifique.
 - `macos` (nécessite une machine macOS)
 - `ios` (nécessite une machine macOS avec Xcode)
 
-#### Utilisation général :
-
-Pour compiler une application Flutter pour `<plateforme>`, utilisez la syntaxe suivante :
+#### Utilisation générale :
 
 ```yaml
-- uses: theobernardon/theo-flutter-actions/build-<plateforme>@main
+- uses: theobernardon/theo-flutter-actions/actions/build/<platform>@main
   with:
     flutter-version: "stable" # Optionnel, par défaut "stable"
 ```
 
 #### Exemple concret :
 
-Pour compiler une application Flutter pour Android :
-
 ```yaml
-- uses: theobernardon/theo-flutter-actions/build-android@main
-  with:
-    flutter-version: "stable"
+- uses: theobernardon/theo-flutter-actions/actions/build/android@main
 ```
 
+---
+
+### 🧠 manage-issues
+
+Automatise la gestion des issues à partir de commentaires GitHub :
+
+| Commande | Action                             |
+|----------|------------------------------------|
+| `/open`  | Déplace l’issue dans "In Progress" |
+| `/test`  | Déplace l’issue dans "In Test"     |
+| `/close` | Ferme l’issue et la passe dans "Done" |
+
+```yaml
+- uses: theobernardon/theo-flutter-actions/actions/manage-issues@main
+  with:
+    project-name: "NomDeTonProjet"
+```
+
+---
+
+## 🔁 Workflows réutilisables (`.github/workflows/`)
+
+### 🚀 release.yml
+
+Déclenche automatiquement les builds Flutter et publie une **release GitHub**, en fonction des plateformes définies dans un fichier `build.yml`.
+
+#### Exemple de `build.yml` :
+
+```yaml
+build:
+  platforms:
+    - android
+    - web
+    - windows
+```
+
+#### Intégration dans un projet Flutter :
+
+```yaml
+name: 📦 Release Flutter
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    uses: theobernardon/theo-flutter-actions/.github/workflows/release.yml@main
+```
+
+### Ce que fait ce workflow :
+
+- 📖 Lit le fichier `build.yml`
+- 🏗️ Déclenche les builds correspondants (via `actions/build/<platform>/`)
+- 📦 Crée une **Release GitHub** avec tous les artefacts générés
+
+---
+
+## ✅ Avantages
+
+- Architecture modulaire et maintenable
+- Actions simples, claires et documentées
+- Reuse complet sans duplication
+- Adapté à une CI/CD Flutter multiplateforme professionnelle
+
+---
+
+> 🧪 Pour tester : ajoute un `build.yml` à la racine d’un projet Flutter, pousse un tag (`v1.0.0`) et regarde la magie opérer ✨
