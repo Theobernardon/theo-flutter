@@ -13,14 +13,32 @@ Ce dépôt contient à la fois :
 
 | Dossier                      | Rôle                                                        |
 |------------------------------|-------------------------------------------------------------|
+| `actions/manage-issues/`     | Gestion d’issues via `/open`, `/test`, `/close`            |
 | `actions/test/`              | Tests automatiques (`flutter test`, `analyze`, etc.)        |
 | `actions/build/<platform>/`  | Build spécifique à une plateforme (`android`, `web`, etc.)  |
-| `actions/manage-issues/`     | Gestion d’issues via `/open`, `/test`, `/close`            |
 | `.github/workflows/`         | Workflows réutilisables (`release.yml`, etc.)              |
 
 ---
 
 ## ✅ Actions disponibles (`actions/`)
+
+### 🧠 manage-issues
+
+Automatise la gestion des issues à partir de commentaires GitHub :
+
+| Commande | Action                             |
+|----------|------------------------------------|
+| `/open`  | Déplace l’issue dans "In Progress" |
+| `/test`  | Déplace l’issue dans "In Test"     |
+| `/close` | Ferme l’issue et la passe dans "Done" |
+
+```yaml
+- uses: theobernardon/theo-flutter/actions/manage-issues@main
+  with:
+    project-name: "NomDeTonProjet"
+```
+
+---
 
 ### 🧪 test
 
@@ -59,24 +77,6 @@ Compile l'application Flutter pour une plateforme spécifique.
 
 ```yaml
 - uses: theobernardon/theo-flutter/actions/build/android@main
-```
-
----
-
-### 🧠 manage-issues
-
-Automatise la gestion des issues à partir de commentaires GitHub :
-
-| Commande | Action                             |
-|----------|------------------------------------|
-| `/open`  | Déplace l’issue dans "In Progress" |
-| `/test`  | Déplace l’issue dans "In Test"     |
-| `/close` | Ferme l’issue et la passe dans "Done" |
-
-```yaml
-- uses: theobernardon/theo-flutter/actions/manage-issues@main
-  with:
-    project-name: "NomDeTonProjet"
 ```
 
 ---
