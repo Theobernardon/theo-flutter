@@ -6,6 +6,12 @@ runs:
     - uses: subosito/flutter-action@v2
       with:
         flutter-version: 'stable'
-    - run: flutter pub get
-    - run: flutter analyze
-    - run: flutter test
+    - name: pub get
+      run: flutter pub get
+      shell: bash
+    - name: analyze
+      run: flutter analyze
+      shell: bash
+    - name: test
+      run: flutter test
+      shell: bash
