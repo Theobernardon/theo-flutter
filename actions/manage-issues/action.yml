@@ -1,87 +1,20 @@
-# Nom affiché dans l'interface GitHub Actions lors de l'exécution
-name: "Manage GitHub Issue Comments"
+name: "Manage Issues by Commit"
+description: "Déplace les issues automatiquement selon les messages de commit (open/test/close #num)"
 
-# Description courte pour savoir à quoi sert cette action
-description: "Gère les commandes /open, /test, /close et déplace l'issue dans le GitHub Project"
-
-# Déclaration des paramètres que tu peux passer à l'action quand tu l'appelles
 inputs:
-  project-name:                 # nom du projet GitHub (classique) à cibler
-    description: "Nom du GitHub Project"
+  project-name:
+    description: "Nom du projet GitHub Project"
     required: true
-  column-open:                  # nom de la colonne pour /open
-    description: "Nom de la colonne 'en cours'"
-    default: "In Progress"
-  column-close:                 # nom de la colonne pour /close
-    description: "Nom de la colonne 'terminé'"
-    default: "Done"
-  column-test:                  # nom de la colonne pour /test
-    description: "Nom de la colonne 'en test'"
-    default: "In Test"
+  column-open:
+    description: "Nom de la colonne pour 'open'"
+    required: true
+  column-test:
+    description: "Nom de la colonne pour 'test'"
+    required: true
+  column-close:
+    description: "Nom de la colonne pour 'close'"
+    required: true
 
-# Type d'action : composite = plusieurs steps ensemble
 runs:
-  using: "composite"
-
-  # Liste des étapes à exécuter
-  steps:
-    - uses: actions/github-script@v7  # Action officielle pour exécuter du JavaScript avec l’API GitHub
-      with:
-        script: |
-          // On récupère le texte du commentaire
-          const comment = context.payload.comment.body.trim().toLowerCase();
-
-          // On récupère l’issue concernée et le contexte du repo
-          const issue = context.payload.issue;
-          const owner = context.repo.owner;
-          const repo = context.repo.repo;
-
-          // Lecture des paramètres passés à l'action
-          const projectName = '${{ inputs["project-name"] }}';
-          const columnOpen = '${{ inputs["column-open"] }}';
-          const columnClose = '${{ inputs["column-close"] }}';
-          const columnTest = '${{ inputs["column-test"] }}';
-
-          // Fonction qui déplace une carte dans une colonne spécifique
-          async function moveToColumn(columnName) {
-            const projects = await github.rest.projects.listForRepo({ owner, repo });
-            const project = projects.data.find(p => p.name === projectName);
-            if (!project) return;
-
-            const columns = await github.rest.projects.listColumns({ project_id: project.id });
-            const column = columns.data.find(c => c.name === columnName);
-            if (!column) return;
-
-            // On récupère toutes les cartes dans toutes les colonnes
-            const allCards = await Promise.all(
-              columns.data.map(c => github.rest.projects.listCards({ column_id: c.id }))
-            );
-            const cards = allCards.flatMap(res => res.data);
-
-            // On cherche la carte correspondant à l’issue courante
-            const card = cards.find(c => c.content_url && c.content_url.endsWith(`/issues/${issue.number}`));
-
-            // Si la carte existe et qu’elle n’est pas déjà dans la bonne colonne → on la déplace
-            if (card && card.column_id !== column.id) {
-              await github.rest.projects.moveCard({
-                card_id: card.id,
-                position: 'top',
-                column_id: column.id
-              });
-            }
-          }
-
-          // On agit en fonction de la commande tapée dans le commentaire
-          if (comment === "/open") {
-            await moveToColumn(columnOpen);          // → colonne "In Progress"
-          } else if (comment === "/close") {
-            await github.rest.issues.update({
-              owner,
-              repo,
-              issue_number: issue.number,
-              state: "closed"                        // → on ferme l'issue
-            });
-            await moveToColumn(columnClose);         // → colonne "Done"
-          } else if (comment === "/test") {
-            await moveToColumn(columnTest);          // → colonne "In Test"
-          }
+  using: "node20"
+  main: "entrypoint.js"

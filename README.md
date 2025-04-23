@@ -22,23 +22,51 @@ Ce dépôt contient à la fois :
 
 ## ✅ Actions disponibles (`actions/`)
 
-### 🧠 manage-issues
+### 🔁 manage-issues-by-commit
 
-Automatise la gestion des issues à partir de commentaires GitHub :
+Automatise le déplacement des issues dans un **GitHub Project** en analysant les **messages de commit**.
 
-| Commande | Action                             |
-|----------|------------------------------------|
-| `/open`  | Déplace l’issue dans "In Progress" |
-| `/test`  | Déplace l’issue dans "In Test"     |
-| `/close` | Ferme l’issue et la passe dans "Done" |
+#### Format attendu du commit :
 
-```yaml
-- uses: theobernardon/theo-flutter/actions/manage-issues@main
-  with:
-    project-name: "NomDeTonProjet"
+```text
+open #12        → déplace l'issue #12 dans "In Progress"
+test #5         → déplace l'issue #5 dans "In Test"
+close #8        → déplace l'issue #8 dans "Done"
+skipcheck: ...  → bypass des vérifications
 ```
 
----
+> Le commit doit commencer par une instruction `open|test|close #num`.  
+> Utilisez `skipcheck:` pour éviter la vérification du hook Git local si nécessaire.
+
+
+#### Exemple d'intégration dans `.github/workflows/project.yml` :
+
+```yaml
+name: 🔄 Sync issues depuis les commits
+
+on:
+  push:
+
+jobs:
+  manage-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: theobernardon/theo-flutter/actions/manage-issues-by-commit@main
+        with:
+          project-name: "CI/CD Workflow"
+          column-open: "In Progress"
+          column-test: "In Test"
+          column-close: "Done"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+
+✅ Cette action :
+- 🔍 Analyse tous les messages de commit du `push`
+- 🔗 Détecte les instructions `open|test|close #num`
+- 🗃️ Trouve la carte liée dans ton Project GitHub
+- 🚚 Déplace automatiquement l’issue dans la bonne colonne
 
 ### 🧪 test
 
