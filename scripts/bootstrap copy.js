@@ -51,6 +51,52 @@ const graphql = async (query, variables = {}) => {
 
   console.log("✅ Projet créé :", project.createProjectV2.projectV2.title);
 
+  console.log("➡️ Création du champ `Statut`...");
+  const field = await graphql(
+    `
+    mutation ($projectId: ID!) {
+      addProjectV2Field(input: {
+        projectId: $projectId,
+        name: "Statut",
+        dataType: SINGLE_SELECT
+      }) {
+        projectV2Field { id }
+      }
+    }
+    `,
+    { projectId }
+  );
+
+  const fieldId = field.addProjectV2Field.projectV2Field.id;
+
+  console.log("➡️ Ajout des options au champ `Statut`...");
+  const options = ["Todo", "In Progress", "In Test", "Done"];
+  const optionIds = {};
+  for (const name of options) {
+    const result = await graphql(
+      `
+      mutation ($fieldId: ID!, $name: String!) {
+        updateProjectV2SingleSelectField(input: {
+          fieldId: $fieldId,
+          name: $name
+        }) {
+          singleSelectOption { id name }
+        }
+      }
+      `,
+      { fieldId, name }
+    );
+    const opt = result.updateProjectV2SingleSelectField.singleSelectOption;
+    optionIds[opt.name] = opt.id;
+    console.log(`✅ Option ajoutée : ${opt.name}`);
+  }
+
+  fs.writeFileSync(
+    "project-config.json",
+    JSON.stringify({ projectId, fieldId, options: optionIds }, null, 2)
+  );
+  console.log("✅ Fichier project-config.json généré");
+
   console.log("➡️ Import des workflows de build sélectionnés...");
   const platforms = SELECTED_PLATFORMS.split(",").map(p => p.trim());
   const workflowsDir = path.join(".github", "workflows", "build");
