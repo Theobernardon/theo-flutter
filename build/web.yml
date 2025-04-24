@@ -1,0 +1,30 @@
+name: 🌐 Web Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, develop, release/**]
+
+jobs:
+  build_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Web
+        run: |
+          flutter build web
+          zip -r build/web.zip build/web
+
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web.zip

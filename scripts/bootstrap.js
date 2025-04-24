@@ -1,11 +1,12 @@
 // .github/scripts/bootstrap.js
-const fetch = require("node-fetch");
-const fs = require("fs");
-const path = require("path");
+import fetch from "node-fetch";
+import fs from "fs";
+import path from "path";
 
 const TOKEN = process.env.GITHUB_TOKEN;
 const REPO_NAME = process.env.REPO_NAME;
 const REPO_OWNER = process.env.REPO_OWNER;
+const SELECTED_PLATFORMS = process.env.PLATFORMS || "android,web";
 
 const graphql = async (query, variables = {}) => {
   const response = await fetch("https://api.github.com/graphql", {
@@ -23,35 +24,31 @@ const graphql = async (query, variables = {}) => {
 
 (async () => {
   console.log("➡️ Création du projet GitHub Projects v2...");
+  const ownerQuery = await graphql(`
+    query {
+      repository(owner: "${REPO_OWNER}", name: "${REPO_NAME}") {
+        owner { id }
+      }
+    }
+  `);
+  const ownerId = ownerQuery.repository.owner.id;
+
   const project = await graphql(
     `
-    mutation ($owner: ID!, $title: String!) {
+    mutation ($ownerId: ID!, $title: String!) {
       createProjectV2(input: {
-        ownerId: $owner,
+        ownerId: $ownerId,
         title: $title
       }) {
-        projectV2 {
-          id
-          title
-        }
+        projectV2 { id title }
       }
     }
     `,
-    {
-      owner: (await graphql(`
-        query {
-          repository(owner: "${REPO_OWNER}", name: "${REPO_NAME}") {
-            owner {
-              id
-            }
-          }
-        }
-      `)).repository.owner.id,
-      title: REPO_NAME
-    }
+    { ownerId, title: REPO_NAME }
   );
 
   const projectId = project.createProjectV2.projectV2.id;
+
   console.log("✅ Projet créé :", project.createProjectV2.projectV2.title);
 
   console.log("➡️ Création du champ `Statut`...");
@@ -63,9 +60,7 @@ const graphql = async (query, variables = {}) => {
         name: "Statut",
         dataType: SINGLE_SELECT
       }) {
-        projectV2Field {
-          id
-        }
+        projectV2Field { id }
       }
     }
     `,
@@ -85,10 +80,7 @@ const graphql = async (query, variables = {}) => {
           fieldId: $fieldId,
           name: $name
         }) {
-          singleSelectOption {
-            id
-            name
-          }
+          singleSelectOption { id name }
         }
       }
       `,
@@ -99,34 +91,24 @@ const graphql = async (query, variables = {}) => {
     console.log(`✅ Option ajoutée : ${opt.name}`);
   }
 
-  const config = {
-    projectId,
-    fieldId,
-    options: optionIds,
-  };
+  fs.writeFileSync(
+    "project-config.json",
+    JSON.stringify({ projectId, fieldId, options: optionIds }, null, 2)
+  );
+  console.log("✅ Fichier project-config.json généré");
 
-  console.log("➡️ Écriture du fichier de config : project-config.json");
-  fs.writeFileSync("project-config.json", JSON.stringify(config, null, 2));
-
-  console.log("➡️ Téléchargement des templates theo-flutter...");
-  const platforms = process.env.PLATFORMS.split(",").map(p => p.trim());
-
-  console.log("➡️ Téléchargement des templates theo-flutter pour les plateformes :", platforms);
-
-  fs.mkdirSync(".github/workflows", { recursive: true });
+  console.log("➡️ Import des workflows de build sélectionnés...");
+  const platforms = SELECTED_PLATFORMS.split(",").map(p => p.trim());
+  const workflowsDir = path.join(".github", "workflows", "build");
+  fs.mkdirSync(workflowsDir, { recursive: true });
 
   for (const platform of platforms) {
-    const file = `build-${platform}.yml`;
-    const url = `https://raw.githubusercontent.com/theobernardon/theo-flutter/main/templates/${file}`;
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Erreur lors du téléchargement de ${file}`);
-      const content = await res.text();
-      fs.writeFileSync(path.join(".github/workflows", file), content);
-      console.log(`✅ Fichier importé : ${file}`);
-    } catch (error) {
-      console.error(`❌ Impossible d'importer ${file} :`, error.message);
-    }
+    const url = `https://raw.githubusercontent.com/theobernardon/theo-flutter/main/templates/build/${platform}.yml`;
+    const res = await fetch(url);
+    const content = await res.text();
+    const outPath = path.join(workflowsDir, `${platform}.yml`);
+    fs.writeFileSync(outPath, content);
+    console.log(`✅ Fichier importé : build/${platform}.yml`);
   }
 
   console.log("✅ Bootstrap terminé !");

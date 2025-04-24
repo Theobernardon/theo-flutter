@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       platforms:
-        description: "Liste des plateformes cibles (ex: android,web,ios)"
+        description: "Liste des plateformes (séparées par des virgules, ex: android,web,windows)"
         required: true
         default: "android,web"
 
 jobs:
   bootstrap:
-    name: ⚙️ Initialiser l'infrastructure CI/CD
+    name: ⚙️ Initialiser CI/CD + Projet GitHub
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout du projet
+      - name: 📥 Checkout du repo
         uses: actions/checkout@v4
 
       - name: 🔧 Setup Node.js
@@ -22,11 +22,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: 📥 Installer les dépendances
+      - name: 📦 Installer les dépendances
         run: npm install
         working-directory: .github/scripts
 
-      - name: 🚀 Exécuter le bootstrap
+      - name: 🚀 Exécuter le script bootstrap
         run: node bootstrap.js
         working-directory: .github/scripts
         env:

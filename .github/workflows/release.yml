@@ -1,92 +1,27 @@
-name: 📦 Release Flutter
+name: 🚀 Publish GitHub Release
 
 on:
-  workflow_call:
-
+  push:
+    tags:
+      - 'v*'  # Déclenche une release sur un tag comme v1.0.0
 
 jobs:
-  detect-builds:
+  release:
+    name: 📦 Create GitHub Release
     runs-on: ubuntu-latest
-    outputs:
-      platforms: ${{ steps.extract.outputs.platforms }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: extract
-        run: |
-          platforms=$(grep -A 10 '^build:' build.yml | grep '-' | awk '{print $2}' | paste -sd "," -)
-          echo "platforms=[$platforms]" >> $GITHUB_OUTPUT
 
-  build-linux:
-    needs: detect-builds
-    if: contains(needs.detect-builds.outputs.platforms, 'linux') || contains(needs.detect-builds.outputs.platforms, 'web') || contains(needs.detect-builds.outputs.platforms, 'android')
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Build Linux/Web/Android
-        run: |
-          for platform in linux web android; do
-            if [[ "${{ needs.detect-builds.outputs.platforms }}" == *"$platform"* ]]; then
-              echo "▶️ Building $platform"
-              gh workflow run theobernardon/theo-flutter/actions/build/$platform@main
-            fi
-          done
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-builds
-          path: |
-            build/**/outputs/**/*.apk
-            build/web.zip
-            build/linux/**/release/*
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
 
-  build-windows:
-    needs: detect-builds
-    if: contains(needs.detect-builds.outputs.platforms, 'windows')
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Windows
-        uses: theobernardon/theo-flutter/actions/build/windows@main
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-build
-          path: build/windows/**/Release/*.exe
-
-  build-macos:
-    needs: detect-builds
-    if: contains(needs.detect-builds.outputs.platforms, 'macos') || contains(needs.detect-builds.outputs.platforms, 'ios')
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build macOS/iOS
-        run: |
-          for platform in macos ios; do
-            if [[ "${{ needs.detect-builds.outputs.platforms }}" == *"$platform"* ]]; then
-              echo "▶️ Building $platform"
-              gh workflow run theobernardon/theo-flutter/actions/build/$platform@main
-            fi
-          done
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-ios-builds
-          path: |
-            build/macos/Build/**/*.app
-            build/ios/iphoneos/*.app
-            build/ios/ipa/*.ipa
-
-  publish:
-    needs: [build-linux, build-windows, build-macos]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
+      - name: 📥 Télécharger tous les artefacts build
+        uses: actions/download-artifact@v4
         with:
           path: release-files
 
-      - name: Create GitHub Release
+      - name: 📦 Créer la release GitHub
         uses: softprops/action-gh-release@v1
         with:
-          files: release-files/**/*
+          files: release-files/**/*  # Inclut tous les binaires buildés (apk, exe, zip…)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
