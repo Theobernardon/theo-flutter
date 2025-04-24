@@ -29,6 +29,13 @@ jobs:
           ref: main
           path: theo-flutter
 
+      - name: temp affichage des chemins ls
+        run: |
+          echo "Chemin du repo courant : $(pwd)"
+          echo "Chemin de theo-flutter : $(pwd)/theo-flutter"
+          echo "Chemin de scripts : $(pwd)/theo-flutter/scripts"
+          echo "Chemin de scripts : $(pwd)/theo-flutter/scripts/bootstrap.js"
+
       - name: 📦 Installer les dépendances
         run: npm install
         working-directory: scripts
