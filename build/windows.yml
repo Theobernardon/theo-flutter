@@ -1,8 +1,9 @@
 name: 🪟 Windows Build
 
 on:
-  workflow_dispatch:
   push:
+    branches: [main, develop, release/**]
+  pull_request:
     branches: [main, develop, release/**]
 
 jobs:
