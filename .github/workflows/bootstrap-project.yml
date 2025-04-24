@@ -31,11 +31,11 @@ jobs:
 
       - name: 📦 Installer les dépendances
         run: npm install
-        working-directory: theo-flutter/scripts
+        working-directory: ./theo-flutter/scripts
 
       - name: 🚀 Exécuter le script bootstrap
         run: node bootstrap.js
-        working-directory: theo-flutter/scripts
+        working-directory: ./theo-flutter/scripts
         env:
           GITHUB_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           REPO_NAME: ${{ github.event.repository.name }}
