@@ -1,12 +1,12 @@
-name: 🚀 Bootstrap Flutter Project
-
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       platforms:
-        description: "Liste des plateformes (séparées par des virgules, ex: android,web,windows)"
         required: true
-        default: "android,web"
+        type: string
+    secrets:
+      PROJECT_TOKEN:
+        required: true
 
 jobs:
   bootstrap:
