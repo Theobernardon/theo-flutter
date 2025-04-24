@@ -1,9 +1,0 @@
-{
-    "name": "manage-issues-action",
-    "version": "1.0.0",
-    "main": "entrypoint.js",
-    "dependencies": {
-        "@actions/core": "^1.10.0",
-        "@actions/github": "^6.0.0"
-    }
-}
