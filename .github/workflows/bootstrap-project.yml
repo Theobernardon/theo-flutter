@@ -29,20 +29,13 @@ jobs:
           ref: main
           path: theo-flutter
 
-      - name: temp affichage des chemins ls
-        run: |
-          echo "Chemin du repo courant : $(pwd)"
-          echo "Chemin de theo-flutter : $(pwd)/theo-flutter"
-          echo "Chemin de scripts : $(pwd)/theo-flutter/scripts"
-          echo "Chemin de scripts : $(pwd)/theo-flutter/scripts/bootstrap.js"
-
       - name: 📦 Installer les dépendances
         run: npm install
-        working-directory: scripts
+        working-directory: theo-flutter/scripts
 
       - name: 🚀 Exécuter le script bootstrap
         run: node bootstrap.js
-        working-directory: scripts
+        working-directory: theo-flutter/scripts
         env:
           GITHUB_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           REPO_NAME: ${{ github.event.repository.name }}
