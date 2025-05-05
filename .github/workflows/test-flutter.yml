@@ -1,0 +1,44 @@
+name: Test et Analyse Flutter Workflow Réutilisable
+
+on:
+  workflow_call:
+    # Map the workflow outputs to job outputs
+    outputs:
+      analyse_output:
+        description: "Résultat de l'analyse"
+        value: ${{ jobs.Analyse-et-tests.outputs.analyse }}
+      test_output:
+        description: "Résultat des tests"
+        value: ${{ jobs.Analyse-et-tests.outputs.test }}
+
+jobs:
+  # Dans un premier temps on fait l'analyse du code et les tests unitaires
+  Analyse-et-tests:
+    # Définit les systèmes d'exploitation sur lesquels exécuter le job
+    runs-on: ubuntu-latest
+    outputs:
+      analyse: ${{ steps.Analyze-code.outputs.analyse }}
+      test: ${{ steps.Run-tests.outputs.test }}
+    steps:
+      # 1️⃣ - Cloner ton code source
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      # 2️⃣ - Installer Flutter 3.29.2 précisément, avec cache automatique
+      - name: "Set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+          cache: true # Active le cache pub + flutter automatiquement
+
+      # 3️⃣ - Récupérer les dépendances Dart/Flutter
+      - name: "Install dependencies"
+        run: flutter pub get
+
+      # 4️⃣ - Vérifier que le code est propre (analyse statique)
+      - id: Analyze-code
+        run: echo "analyse=flutter analyze" >> $GITHUB_OUTPUT
+
+      # 5️⃣ - Lancer les tests unitaires
+      - id: Run-tests
+        run: echo "test=flutter test" >> $GITHUB_OUTPUT

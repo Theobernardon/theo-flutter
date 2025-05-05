@@ -1,0 +1,16 @@
+name: Flutter CI
+
+# Déclenche le workflow sur les pull_request
+# pour les branches spécifiées : main, dev** et release/**
+on:
+  pull_request:
+    branches:
+      - main
+      - dev**
+      - release/**
+  workflow_dispatch: # Tu peux aussi le lancer manuellement depuis l'interface GitHub
+
+jobs:
+  # Dans un premier temps on fait l'analyse du code et les tests unitaires
+  Analyse-et-tests:
+    uses: Theobernardon/theo-flutter/.github/workflows/test-flutter.yml@main
