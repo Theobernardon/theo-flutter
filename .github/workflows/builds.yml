@@ -13,6 +13,7 @@ jobs:
   Builds:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         platforms: ${{ fromJson(inputs.platforms) }} # Récupère la liste des plateformes à builder
         include:
