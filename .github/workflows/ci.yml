@@ -18,7 +18,5 @@ jobs:
   Builds:
     uses: Theobernardon/theo-flutter/.github/workflows/builds.yml@main
     with:
-      platforms: # Liste des plateformes à builder
-        - android
-        - ios
-        - web
+      # Liste des plateformes à builder
+      platforms: windows, linux, macos, apk, ios, web
