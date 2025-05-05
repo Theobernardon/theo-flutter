@@ -17,28 +17,28 @@ jobs:
       matrix:
         platforms: ${{ fromJson(inputs.platforms) }} # Récupère la liste des plateformes à builder
         include:
-          - if: contains(matrix.platform, 'windows')
+          - if: contains(matrix.platforms, 'windows')
             platforms: windows
             os: windows-latest
             path: build\windows\x64\runner\Release\
-          - if: contains(matrix.platform, 'linux')
+          - if: contains(matrix.platforms, 'linux')
             platforms: linux
             os: ubuntu-latest
             path: build/linux/x64/release/bundle/
-          - if: contains(matrix.platform, 'macos')
-            platform: macos
+          - if: contains(matrix.platforms, 'macos')
+            platforms: macos
             os: macos-latest
             path: build/macos/Build/**/*.app # a tester
-          - if: contains(matrix.platform, 'apk')
-            platform: apk
+          - if: contains(matrix.platforms, 'apk')
+            platforms: apk
             os: ubuntu-latest
             path: build/app/outputs/flutter-apk/ # a tester
-          - if: contains(matrix.platform, 'ios')
-            platform: ios
+          - if: contains(matrix.platforms, 'ios')
+            platforms: ios
             os: macos-latest
             path: build/ios/iphoneos/*.ipa # a tester
-          - if: contains(matrix.platform, 'web')
-            platform: web
+          - if: contains(matrix.platforms, 'web')
+            platforms: web
             os: ubuntu-latest
             path: build/web # a tester
 
