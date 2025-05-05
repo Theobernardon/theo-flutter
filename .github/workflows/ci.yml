@@ -14,3 +14,11 @@ jobs:
   # Dans un premier temps on fait l'analyse du code et les tests unitaires
   Analyse-et-tests:
     uses: Theobernardon/theo-flutter/.github/workflows/test-flutter.yml@main
+
+  Builds:
+    uses: Theobernardon/theo-flutter/.github/workflows/builds.yml@main
+    with:
+      platforms: # Liste des plateformes à builder
+        - android
+        - ios
+        - web
