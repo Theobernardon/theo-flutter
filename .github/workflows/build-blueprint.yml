@@ -57,7 +57,7 @@ jobs:
 
       ## Build en debug
       - name: Build for ${{ inputs.platform }}
-        if: inputs.release
+        if: !inputs.release
         run: flutter build ${{ inputs.platform }} --debug
 
       #### Partie 2 : Archiver les artefacts de la build debug ####
@@ -99,12 +99,12 @@ jobs:
       ### Linux Build Steps ###
       # 1️⃣ - Archiver les artefacts de la build Linux
       - name: Archive Linux bundle into tar.gz
-        if: inputs.platform == 'linux' && success() && inputs.release
+        if: inputs.release && (inputs.platform == 'linux') && success()
         run: tar -czf flutter-linux.tar.gz -C build/linux/x64/release/bundle .
 
       # 2️⃣ - Télécharger l'artefact de construction Linux
       - name: Télécharger l'artefact Linux compressé
-        if: inputs.platform == 'linux' && success() && inputs.release
+        if: inputs.release && (inputs.platform == 'linux') && success()
         uses: actions/upload-artifact@v4
         with:
           name: flutter-build-linux
