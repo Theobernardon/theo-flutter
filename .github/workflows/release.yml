@@ -9,9 +9,10 @@ on:
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
     secrets:
-      github_token:
-        required: true
-        description: "Token d'authentification pour GitHub API"
+      inherit:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # GITHUB_TOKEN est une variable d'environnement secrète fournie par GitHub Actions pour authentifier les requêtes API
+        # et permettre l'accès aux fonctionnalités de GitHub, comme la création de releases.
 
 jobs:
   windows:
@@ -70,4 +71,4 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: artifacts/flutter-build**/**
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
