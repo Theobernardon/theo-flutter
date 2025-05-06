@@ -1,4 +1,4 @@
-name: Builder Flutter Workflow Réutilisable
+name: Builder Flutter blueprint Workflow Réutilisable
 
 on:
   workflow_call:
