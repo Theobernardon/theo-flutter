@@ -57,7 +57,7 @@ jobs:
 
       ## Build en debug
       - name: Build for ${{ inputs.platform }}
-        if: !inputs.release
+        if: inputs.release == false
         run: flutter build ${{ inputs.platform }} --debug
 
       #### Partie 2 : Archiver les artefacts de la build debug ####
