@@ -17,7 +17,7 @@ jobs:
       platform: windows
       os: windows-latest
       path: build\windows\x64\runner\Release\
-  
+
   Build-linux:
     if: contains(inputs.platforms, 'linux')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
@@ -25,7 +25,7 @@ jobs:
       platform: linux
       os: ubuntu-latest
       path: build/linux/x64/release/bundle/
-  
+
   Build-macos:
     if: contains(inputs.platforms, 'macos')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
@@ -33,7 +33,7 @@ jobs:
       platform: macos
       os: macos-latest
       path: build/macos/Build/**/*.app # a tester
-  
+
   Build-apk:
     if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
@@ -41,7 +41,7 @@ jobs:
       platform: apk
       os: ubuntu-latest
       path: build/app/outputs/flutter-apk/ # a tester
-  
+
   Build-ios:
     if: contains(inputs.platforms, 'ios')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
