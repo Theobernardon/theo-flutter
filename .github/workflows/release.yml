@@ -9,7 +9,7 @@ on:
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
     secrets:
-      github_token:
+      token:
         required: true
         description: "Token d'authentification pour GitHub Actions"
 
@@ -70,4 +70,4 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: artifacts/flutter-build**/**
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          GITHUB_TOKEN: ${{ secrets.token }}
