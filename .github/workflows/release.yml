@@ -9,10 +9,9 @@ on:
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
     secrets:
-      inherit:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # GITHUB_TOKEN est une variable d'environnement secrète fournie par GitHub Actions pour authentifier les requêtes API
-        # et permettre l'accès aux fonctionnalités de GitHub, comme la création de releases.
+      GITHUB_TOKEN:
+        required: true
+        description: "Token d'authentification pour GitHub Actions"
 
 jobs:
   windows:
