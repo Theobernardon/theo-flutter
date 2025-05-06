@@ -8,6 +8,11 @@ on:
         required: true
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
+      release:
+        required: false
+        type: boolean
+        description: "Si true, on build en release, sinon en debug (par défaut : false)"
+        default: false
 
 jobs:
   windows:
@@ -17,6 +22,7 @@ jobs:
       platform: windows
       os: windows-latest
       path: build\windows\x64\runner\Release\
+      release: ${{ inputs.release }} # Si true, on build en release, sinon en debug (par défaut : false)
 
   linux:
     if: contains(inputs.platforms, 'linux')
@@ -25,6 +31,7 @@ jobs:
       platform: linux
       os: ubuntu-latest
       path: build/linux/x64/release/bundle/
+      release: ${{ inputs.release }}
 
   macos:
     if: contains(inputs.platforms, 'macos')
@@ -33,6 +40,7 @@ jobs:
       platform: macos
       os: macos-latest
       path: build/macos/Build/**/*.app # a tester
+      release: ${{ inputs.release }}
 
   apk:
     if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
@@ -41,6 +49,7 @@ jobs:
       platform: apk
       os: ubuntu-latest
       path: build/app/outputs/flutter-apk/ # a tester
+      release: ${{ inputs.release }}
 
   ios:
     if: contains(inputs.platforms, 'ios')
@@ -49,6 +58,7 @@ jobs:
       platform: ios
       os: macos-latest
       path: build/ios/iphoneos/*.ipa # a tester
+      release: ${{ inputs.release }}
 
   web:
     if: contains(inputs.platforms, 'web')
@@ -57,3 +67,4 @@ jobs:
       platform: web
       os: ubuntu-latest
       path: build/web # a tester
+      release: ${{ inputs.release }}

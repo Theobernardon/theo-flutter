@@ -16,12 +16,18 @@ on:
         required: true
         type: string
         description: "chemin de la build"
+      release:
+        required: false
+        type: boolean
+        description: "Si true, on build en release, sinon en debug (par défaut : false)"
+        default: false
 
 jobs:
   Build:
     name: ${{ inputs.platform }}
     runs-on: ${{ inputs.os }}
     steps:
+      #### Partie 1 : Préparation ####
       # 1️⃣ - Cloner ton code source
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,10 +49,18 @@ jobs:
         if: inputs.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libglib2.0-dev
 
-      # 5️⃣ - Builder ton application pour la plateforme spécifiée
-      - name: Build for ${{ inputs.platform }}
-        run: flutter build ${{ inputs.platform }}
+      #### Partie 2 : Builds ####
+      # 5️⃣ - Build en release 
+      - name: Build for ${{ inputs.platform }} (release)
+        if: inputs.release
+        run: flutter build ${{ inputs.platform }} --release
 
+      # 5️⃣ - Build en debug
+      - name: Build for ${{ inputs.platform }}
+        if: inputs.release
+        run: flutter build ${{ inputs.platform }} --debug
+
+      #### Partie 3 : Archiver les artefacts de la build ####
       # 6️⃣ - Archiver les artefacts de la build pour la plateforme spécifiée
       - name: Archive ${{ inputs.platform }} build artifacts
         if: success()
