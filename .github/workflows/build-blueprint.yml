@@ -19,6 +19,7 @@ on:
 
 jobs:
   Build:
+    name: 🚀
     runs-on: ${{ inputs.os }}
     steps:
       # 1️⃣ - Cloner ton code source
