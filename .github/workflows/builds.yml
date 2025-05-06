@@ -10,7 +10,7 @@ on:
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
 
 jobs:
-  Build-windows:
+  windows:
     if: contains(inputs.platforms, 'windows')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
     with:
@@ -18,7 +18,7 @@ jobs:
       os: windows-latest
       path: build\windows\x64\runner\Release\
 
-  Build-linux:
+  linux:
     if: contains(inputs.platforms, 'linux')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
     with:
@@ -26,7 +26,7 @@ jobs:
       os: ubuntu-latest
       path: build/linux/x64/release/bundle/
 
-  Build-macos:
+  macos:
     if: contains(inputs.platforms, 'macos')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
     with:
@@ -34,7 +34,7 @@ jobs:
       os: macos-latest
       path: build/macos/Build/**/*.app # a tester
 
-  Build-apk:
+  apk:
     if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
     with:
@@ -42,7 +42,7 @@ jobs:
       os: ubuntu-latest
       path: build/app/outputs/flutter-apk/ # a tester
 
-  Build-ios:
+  ios:
     if: contains(inputs.platforms, 'ios')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
     with:
@@ -50,7 +50,7 @@ jobs:
       os: macos-latest
       path: build/ios/iphoneos/*.ipa # a tester
 
-  Build-web:
+  web:
     if: contains(inputs.platforms, 'web')
     uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
     with:
