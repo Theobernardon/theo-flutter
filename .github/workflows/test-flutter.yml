@@ -6,6 +6,7 @@ on:
 jobs:
   # Dans un premier temps on fait l'analyse du code et les tests unitaires
   Analyse-et-tests:
+    name: 🚦
     # Définit les systèmes d'exploitation sur lesquels exécuter le job
     runs-on: ubuntu-latest
     steps:
