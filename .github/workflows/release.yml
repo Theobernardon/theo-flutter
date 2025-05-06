@@ -14,7 +14,7 @@ on:
         description: "Token d'authentification pour GitHub Actions"
 
 jobs:
-  windows:
+  All-select:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
