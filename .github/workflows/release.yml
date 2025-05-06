@@ -8,6 +8,8 @@ on:
         required: true
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
+permissions:
+  contents: write # for release
 
 jobs:
   windows:
@@ -66,4 +68,4 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: artifacts/flutter-build**/**
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
