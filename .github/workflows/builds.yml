@@ -10,68 +10,50 @@ on:
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
 
 jobs:
-  Builds:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        platforms: ${{ fromJson(inputs.platforms) }} # Récupère la liste des plateformes à builder
-        include:
-          - if: contains(matrix.platforms, 'windows')
-            platforms: windows
-            os: windows-latest
-            path: build\windows\x64\runner\Release\
-          - if: contains(matrix.platforms, 'linux')
-            platforms: linux
-            os: ubuntu-latest
-            path: build/linux/x64/release/bundle/
-          - if: contains(matrix.platforms, 'macos')
-            platforms: macos
-            os: macos-latest
-            path: build/macos/Build/**/*.app # a tester
-          - if: contains(matrix.platforms, 'apk')
-            platforms: apk
-            os: ubuntu-latest
-            path: build/app/outputs/flutter-apk/ # a tester
-          - if: contains(matrix.platforms, 'ios')
-            platforms: ios
-            os: macos-latest
-            path: build/ios/iphoneos/*.ipa # a tester
-          - if: contains(matrix.platforms, 'web')
-            platforms: web
-            os: ubuntu-latest
-            path: build/web # a tester
+  Build-windows:
+    if: contains(inputs.platforms, 'windows')
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    with:
+      platform: windows
+      os: windows-latest
+      path: build\windows\x64\runner\Release\
+  
+  Build-linux:
+    if: contains(inputs.platforms, 'linux')
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    with:
+      platform: linux
+      os: ubuntu-latest
+      path: build/linux/x64/release/bundle/
+  
+  Build-macos:
+    if: contains(inputs.platforms, 'macos')
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    with:
+      platform: macos
+      os: macos-latest
+      path: build/macos/Build/**/*.app # a tester
+  
+  Build-apk:
+    if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    with:
+      platform: apk
+      os: ubuntu-latest
+      path: build/app/outputs/flutter-apk/ # a tester
+  
+  Build-ios:
+    if: contains(inputs.platforms, 'ios')
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    with:
+      platform: ios
+      os: macos-latest
+      path: build/ios/iphoneos/*.ipa # a tester
 
-    steps:
-      # 1️⃣ - Cloner ton code source
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # 2️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable # Utilise le canal stable pour la version de Flutter
-          flutter-version-file: pubspec.yaml
-          cache: true # Active le cache pub + flutter automatiquement
-
-      # 3️⃣ - Récupérer les dépendances Dart/Flutter
-      - name: Install dependencies
-        run: flutter pub get
-
-      # 4️⃣ - Installer les dépendances nécessaires pour Linux si on build sur Linux
-      - name: Installer les dépendances Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libglib2.0-dev
-
-      # 5️⃣ - Builder ton application pour la plateforme spécifiée
-      - name: Build for ${{ matrix.platforms }}
-        run: flutter build ${{ matrix.platforms }}
-
-      # 6️⃣ - Archiver les artefacts de la build pour la plateforme spécifiée
-      - name: Archive ${{ matrix.platforms }} build artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-build-${{ matrix.platforms }}
-          path: ${{ matrix.path }}
+  Build-web:
+    if: contains(inputs.platforms, 'web')
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    with:
+      platform: web
+      os: ubuntu-latest
+      path: build/web # a tester
