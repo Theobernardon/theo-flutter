@@ -3,10 +3,10 @@ name: Update version pubspec
 on:
   workflow_call:
     inputs:
-      branch:
+      commit_message:
         required: true
         type: string
-        description: "Nom de la branche à mettre à jour"
+        description: "Nom de la branche (dans le commit message) à mettre à jour"
     secrets:
       token:
         required: true
@@ -14,7 +14,7 @@ on:
 
 jobs:
   MINOR-increment:
-    if: contains(inputs.branch, 'feature')
+    if: contains(inputs.commit_message, 'feature')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,10 +34,10 @@ jobs:
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
           git commit -m "ci: bump minor version in pubspec.yaml"
-          git push origin HEAD:${{ github.base_ref }}
+          git push origin HEAD:${{ github.ref_name }}
 
   PATCH-increment:
-    if: contains(inputs.branch, 'fix')
+    if: contains(inputs.commit_message, 'fix')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,10 +57,10 @@ jobs:
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
           git commit -m "ci: bump build version in pubspec.yaml"
-          git push origin HEAD:${{ github.base_ref }}
+          git push origin HEAD:${{ github.ref_name }}
 
   BUILD-increment:
-    if: contains(inputs.branch, 'develop')
+    if: contains(inputs.commit_message, 'develop')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -80,4 +80,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
           git commit -m "ci: bump minor version in pubspec.yaml"
-          git push origin HEAD:${{ github.base_ref }}
+          git push origin HEAD:${{ github.ref_name }}
