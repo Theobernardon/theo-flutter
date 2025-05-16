@@ -18,16 +18,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        #with:
-        #  sparse-checkout: |
-        #    .github/scripts/bump_version.py
-        #    pubspec.yaml
+        with:
+          sparse-checkout: |
+            .github/scripts/bump_version.py
+            pubspec.yaml
+          sparse-checkout-cone-mode: false
       - name: Install Python (for YAML manipulation)
         uses: actions/setup-python@v4
       - name: Bump minor version in pubspec.yaml
         run: |
           pip install pyyaml
-          ls -R
+          ls
           python .github/scripts/bump_version.py minor
       - name: Commit and push changes
         run: |
