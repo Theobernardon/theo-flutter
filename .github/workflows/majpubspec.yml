@@ -1,0 +1,83 @@
+name: Update version pubspec
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+        description: "Nom de la branche à mettre à jour"
+    secrets:
+      token:
+        required: true
+        description: "Token d'authentification pour GitHub Actions"
+
+jobs:
+  MINOR-increment:
+    if: contains(inputs.branch, 'feature')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts/bump_version.py
+            pubspec.yaml
+      - name: Install Python (for YAML manipulation)
+        uses: actions/setup-python@v4
+      - name: Bump minor version in pubspec.yaml
+        run: |
+          pip install pyyaml
+          python .github/scripts/bump_version.py minor
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add pubspec.yaml
+          git commit -m "ci: bump minor version in pubspec.yaml"
+          git push origin HEAD:${{ github.base_ref }}
+
+  PATCH-increment:
+    if: contains(inputs.branch, 'fix')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts/bump_version.py
+            pubspec.yaml
+      - name: Install Python (for YAML manipulation)
+        uses: actions/setup-python@v4
+      - name: Bump patch version in pubspec.yaml
+        run: |
+          pip install pyyaml
+          python .github/scripts/bump_version.py patch
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add pubspec.yaml
+          git commit -m "ci: bump build version in pubspec.yaml"
+          git push origin HEAD:${{ github.base_ref }}
+
+  BUILD-increment:
+    if: contains(inputs.branch, 'develop')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts/bump_version.py
+            pubspec.yaml
+      - name: Install Python (for YAML manipulation)
+        uses: actions/setup-python@v4
+      - name: Bump build version in pubspec.yaml
+        run: |
+          pip install pyyaml
+          python .github/scripts/bump_version.py build
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add pubspec.yaml
+          git commit -m "ci: bump minor version in pubspec.yaml"
+          git push origin HEAD:${{ github.base_ref }}
