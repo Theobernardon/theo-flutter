@@ -27,6 +27,7 @@ jobs:
       - name: Bump minor version in pubspec.yaml
         run: |
           pip install pyyaml
+          ls
           python .github/scripts/bump_version.py minor
       - name: Commit and push changes
         run: |
