@@ -25,10 +25,11 @@ jobs:
           sparse-checkout-cone-mode: true
       - name: Install Python (for YAML manipulation)
         uses: actions/setup-python@v4
+      - name: COPY bump_version.py to root
+        run: cp .github/scripts/bump_version.py .
       - name: Bump minor version in pubspec.yaml
         run: |
           pip install pyyaml
-          COPY bump_version.py .github/scripts/bump_version.py
           python bump_version.py minor
       - name: Commit and push changes
         run: |
