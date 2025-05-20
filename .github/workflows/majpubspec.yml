@@ -3,10 +3,10 @@ name: Update version pubspec
 on:
   workflow_call:
     inputs:
-      commit_message:
+      branch_name:
         required: true
         type: string
-        description: "Nom de la branche (dans le commit message) à mettre à jour"
+        description: "Nom de la branche à mettre à jour"
     secrets:
       token:
         required: true
@@ -29,11 +29,11 @@ jobs:
       - name: Determine increment type
         id: inc
         run: |
-          if [[ "${{ inputs.commit_message }}" == *feature* ]]; then
+          if [[ "${{ inputs.branch_name }}" == *feature-* ]]; then
             echo "type=minor" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.commit_message }}" == *fix* ]]; then
+          elif [[ "${{ inputs.branch_name }}" == *fix-* ]]; then
             echo "type=patch" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.commit_message }}" == *develop* ]]; then
+          elif [[ "${{ inputs.branch_name }}" == *develop-* ]]; then
             echo "type=build" >> $GITHUB_OUTPUT
           else
             echo "type=none" >> $GITHUB_OUTPUT
@@ -52,4 +52,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
           git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ github.ref_name }} by $GITHUB_ACTOR"
-          git push origin HEAD:${{ github.ref_name }}
+          git push
