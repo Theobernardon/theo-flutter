@@ -34,7 +34,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
-          git commit -m "ci: bump minor version in pubspec.yaml"
+          git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ github.ref_name }} by $GITHUB_ACTOR"
           git push origin HEAD:${{ github.ref_name }}
 
   PATCH-increment:
@@ -57,7 +57,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
-          git commit -m "ci: bump build version in pubspec.yaml"
+          git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ github.ref_name }} by $GITHUB_ACTOR"
           git push origin HEAD:${{ github.ref_name }}
 
   BUILD-increment:
@@ -80,5 +80,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
-          git commit -m "ci: bump minor version in pubspec.yaml"
+          git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ github.ref_name }} by $GITHUB_ACTOR"
           git push origin HEAD:${{ github.ref_name }}
