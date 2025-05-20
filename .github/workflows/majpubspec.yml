@@ -30,7 +30,7 @@ jobs:
           pip install pyyaml
           ls
           ls .github/scripts
-          python .github/scripts/bump_version.py minor
+          sudo python .github/scripts/bump_version.py minor
       - name: Commit and push changes
         run: |
           git config user.name "github-actions"
