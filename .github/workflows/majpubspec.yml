@@ -25,6 +25,13 @@ jobs:
           sparse-checkout-cone-mode: true
       - name: Install Python (for YAML manipulation)
         uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: tests
+        run: |
+          ls -a
+          echo ""
+          ls
       - name: pip install pyyaml
         run: pip install pyyaml
       - name: Bump minor version in pubspec.yaml
