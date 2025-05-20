@@ -28,9 +28,8 @@ jobs:
       - name: Bump minor version in pubspec.yaml
         run: |
           pip install pyyaml
-          ls
-          ls .github/scripts
-          sudo python .github/scripts/bump_version.py minor
+          cd .github/scripts
+          python .github/scripts/bump_version.py minor
       - name: Commit and push changes
         run: |
           git config user.name "github-actions"
