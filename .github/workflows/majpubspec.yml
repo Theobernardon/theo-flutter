@@ -39,6 +39,14 @@ jobs:
             echo "type=none" >> $GITHUB_OUTPUT
           fi
 
+      - name: Configurer Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions@github.com"
+
+      - name: Puller les changements distants
+        run: git pull origin ${{ inputs.branch_name }}
+
       - name: Bump version in pubspec.yaml
         if: steps.inc.outputs.type != 'none'
         run: |
@@ -48,8 +56,6 @@ jobs:
       - name: Commit and push changes
         if: steps.inc.outputs.type != 'none'
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
           git add pubspec.yaml
           git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ inputs.branch_name }} by $GITHUB_ACTOR"
           git push origin HEAD:${{ inputs.branch_name }}
