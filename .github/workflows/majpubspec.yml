@@ -51,5 +51,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add pubspec.yaml
-          git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ github.ref_name }} by $GITHUB_ACTOR"
+          git commit -m "ci(pubspec): bump version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ inputs.branch_name }} by $GITHUB_ACTOR"
           git push origin HEAD:${{ inputs.branch_name }}
