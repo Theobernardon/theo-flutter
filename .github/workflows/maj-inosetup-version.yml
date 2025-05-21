@@ -1,0 +1,49 @@
+name: Update version pubspec
+
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        required: true
+        type: string
+        description: "Nom de la branche à mettre à jour"
+    secrets:
+      token:
+        required: true
+        description: "Token d'authentification pour GitHub Actions"
+
+jobs:
+  Update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts/maj_inosetup.py
+            pubspec.yaml
+            installer.iss
+          sparse-checkout-cone-mode: true
+
+      - name: Install Python (for YAML manipulation)
+        uses: actions/setup-python@v4
+
+      - name: Configurer Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions@github.com"
+
+      - name: Puller et Switcher sur la bonne branche
+        run: |
+          git pull origin ${{ inputs.branch_name }} --rebase
+          git checkout ${{ inputs.branch_name }}
+
+      - name: Bump version in pubspec.yaml
+        run: |
+          pip install pyyaml
+          python .github/scripts/maj_inosetup.py
+
+      - name: Commit and push changes
+        run: |
+          git add installer.iss
+          git commit -m "ci(inosetup): Màj installer.iss version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ inputs.branch_name }} by $GITHUB_ACTOR"
+          git push origin HEAD:${{ inputs.branch_name }}
