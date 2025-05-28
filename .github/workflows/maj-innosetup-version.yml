@@ -1,4 +1,4 @@
-name: Update version pubspec
+name: Update version innosetup
 
 on:
   workflow_call:
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            .github/scripts/maj_inosetup.py
+            .github/scripts/maj_innosetup.py
             pubspec.yaml
             installer.iss
           sparse-checkout-cone-mode: true
@@ -40,10 +40,10 @@ jobs:
       - name: Bump version in pubspec.yaml
         run: |
           pip install pyyaml
-          python .github/scripts/maj_inosetup.py
+          python .github/scripts/maj_innosetup.py
 
       - name: Commit and push changes
         run: |
           git add installer.iss
-          git commit -m "ci(inosetup): Màj installer.iss version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ inputs.branch_name }} by $GITHUB_ACTOR"
+          git commit -m "ci(innosetup): Màj installer.iss version to $(grep version pubspec.yaml | cut -d ' ' -f 2) on branch ${{ inputs.branch_name }} by $GITHUB_ACTOR"
           git push origin HEAD:${{ inputs.branch_name }}
