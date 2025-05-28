@@ -40,9 +40,13 @@ jobs:
           flutter-version-file: pubspec.yaml
           cache: true # Active le cache pub + flutter automatiquement
 
-      # 3️⃣ - Récupérer les dépendances Dart/Flutter
+      # 3️⃣ - Récupérer les dépendances Dart/Flutter 
       - name: Install dependencies
         run: flutter pub get
+      
+      # 3️⃣bis - Automatisation de la création des icônes par flutter_launcher_icons
+      - name: Création des icônes
+        run: flutter pub run flutter_launcher_icons:main
 
       # 4️⃣ - Installer les dépendances nécessaires pour Linux si on build sur Linux
       - name: Installer les dépendances Linux
