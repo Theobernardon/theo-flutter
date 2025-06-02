@@ -52,13 +52,13 @@ jobs:
       - name: Build for ${{ inputs.platform }} (${{ inputs.mode }})
         shell: bash
         run: |
-          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | grep '✓ Built' | awk '{print $3}')
+          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep '✓ Built' | awk '{print $3} || true')
           # echo "BUILT_PATH=$OUTPUT" >> $GITHUB_ENV
           # echo "Sortie build : $BUILT_OUTPUT"
           BUILT_PATH=$(dirname "$OUTPUT")
           echo "Sortie build : $BUILT_PATH"
           echo "BUILT_PATH=$BUILT_PATH" >> $GITHUB_ENV
-          cat build.log # Affiche le log de la build pour débogage
+          cat build.log   # Pour debug, voir la sortie complète
 
       #### Partie 2 : Archiver les artefacts de la build debug ####
       # 1️⃣ - Archiver les artefacts de la build pour la plateforme spécifiée
