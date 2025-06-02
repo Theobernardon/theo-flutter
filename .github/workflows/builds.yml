@@ -16,7 +16,7 @@ on:
 jobs:
   windows:
     if: contains(inputs.platforms, 'windows')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
     with:
       platform: windows
       os: windows-latest
@@ -24,7 +24,7 @@ jobs:
 
   linux:
     if: contains(inputs.platforms, 'linux')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
     with:
       platform: linux
       os: ubuntu-latest
@@ -32,7 +32,7 @@ jobs:
 
   macos:
     if: contains(inputs.platforms, 'macos')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
     with:
       platform: macos
       os: macos-latest
@@ -40,7 +40,7 @@ jobs:
 
   apk:
     if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
     with:
       platform: apk
       os: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
 
   ios:
     if: contains(inputs.platforms, 'ios')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
     with:
       platform: ios
       os: macos-latest
@@ -56,7 +56,7 @@ jobs:
 
   web:
     if: contains(inputs.platforms, 'web')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@test
+    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
     with:
       platform: web
       os: ubuntu-latest
