@@ -52,11 +52,10 @@ jobs:
       - name: Build for ${{ inputs.platform }} (${{ inputs.mode }})
         shell: bash
         run: |
-          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep '✓ Built' | awk '{print $3} | true')
-          # echo "BUILT_PATH=$OUTPUT" >> $GITHUB_ENV
-          # echo "Sortie build : $BUILT_OUTPUT"
-          BUILT_PATH=$(dirname "$OUTPUT")
-          echo "Sortie build : $BUILT_PATH"
+          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep '✓ Built' || true)
+          echo "Sortie build grep : $OUTPUT"
+          BUILT_PATH=$(echo "$OUTPUT" | awk '{print $3}')
+          echo "Sortie build awk : $BUILT_PATH"
           echo "BUILT_PATH=$BUILT_PATH" >> $GITHUB_ENV
           cat build.log   # Pour debug, voir la sortie complète
 
