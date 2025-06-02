@@ -52,7 +52,7 @@ jobs:
       - name: Build for ${{ inputs.platform }} (${{ inputs.mode }})
         shell: bash
         run: |
-          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep '✓ Built' | awk '{print $3} || true')
+          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep '✓ Built' | awk '{print $3} | true')
           # echo "BUILT_PATH=$OUTPUT" >> $GITHUB_ENV
           # echo "Sortie build : $BUILT_OUTPUT"
           BUILT_PATH=$(dirname "$OUTPUT")
