@@ -52,12 +52,22 @@ jobs:
       - name: Build for ${{ inputs.platform }} (${{ inputs.mode }})
         shell: bash
         run: |
-          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep '✓ Built' || true)
+          # Build et récupère la ligne avec "Built" (unicode OK pour "✓" ou "√")
+          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep -E '✓ Built|√ Built' || true)
           echo "Sortie build grep : $OUTPUT"
+
+          # Récupérer la 3e colonne comme chemin
           BUILT_PATH=$(echo "$OUTPUT" | awk '{print $3}')
+          # Optionnel : convertir \ en / pour compatibilité bash
+          BUILT_PATH_CLEAN=$(echo "$BUILT_PATH" | sed 's|\\|/|g')
           echo "Sortie build awk : $BUILT_PATH"
-          echo "BUILT_PATH=$BUILT_PATH" >> $GITHUB_ENV
-          cat build.log   # Pour debug, voir la sortie complète
+          echo "Sortie build clean : $BUILT_PATH_CLEAN"
+          echo "BUILT_PATH=$BUILT_PATH_CLEAN" >> $GITHUB_ENV
+
+          # Extraire le dossier parent
+          PARENT_DIR=$(dirname "$BUILT_PATH_CLEAN")
+          echo "PARENT_DIR=$PARENT_DIR" >> $GITHUB_ENV
+          cat build.log
 
       #### Partie 2 : Archiver les artefacts de la build debug ####
       # 1️⃣ - Archiver les artefacts de la build pour la plateforme spécifiée
