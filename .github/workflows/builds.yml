@@ -8,11 +8,10 @@ on:
         required: true
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
-      release:
-        required: false
-        type: boolean
-        description: "Si true, on build en release, sinon en debug (par défaut : false)"
-        default: false
+      mode:
+        required: true
+        type: string
+        description: "release ou debug"
 
 jobs:
   windows:
@@ -21,8 +20,7 @@ jobs:
     with:
       platform: windows
       os: windows-latest
-      path: build\windows\x64\runner\Release\
-      release: ${{ inputs.release }} # Si true, on build en release, sinon en debug (par défaut : false)
+      mode: ${{ inputs.mode }} # release ou debug
 
   linux:
     if: contains(inputs.platforms, 'linux')
@@ -30,8 +28,7 @@ jobs:
     with:
       platform: linux
       os: ubuntu-latest
-      path: build/linux/x64/release/bundle/
-      release: ${{ inputs.release }}
+      mode: ${{ inputs.mode }}
 
   macos:
     if: contains(inputs.platforms, 'macos')
@@ -39,8 +36,7 @@ jobs:
     with:
       platform: macos
       os: macos-latest
-      path: build/macos/Build/**/*.app # a tester
-      release: ${{ inputs.release }}
+      mode: ${{ inputs.mode }}
 
   apk:
     if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
@@ -48,8 +44,7 @@ jobs:
     with:
       platform: apk
       os: ubuntu-latest
-      path: build/app/outputs/flutter-apk/ # a tester
-      release: ${{ inputs.release }}
+      mode: ${{ inputs.mode }}
 
   ios:
     if: contains(inputs.platforms, 'ios')
@@ -57,8 +52,7 @@ jobs:
     with:
       platform: ios
       os: macos-latest
-      path: build/ios/iphoneos/*.ipa # a tester
-      release: ${{ inputs.release }}
+      mode: ${{ inputs.mode }}
 
   web:
     if: contains(inputs.platforms, 'web')
@@ -66,5 +60,4 @@ jobs:
     with:
       platform: web
       os: ubuntu-latest
-      path: build/web # a tester
-      release: ${{ inputs.release }}
+      mode: ${{ inputs.mode }}
