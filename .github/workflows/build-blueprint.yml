@@ -53,21 +53,18 @@ jobs:
         shell: bash
         run: |
           # Build et récupère la ligne avec "Built" (unicode OK pour "✓" ou "√")
-          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | tee build.log | grep -E '✓ Built|√ Built' || true)
+          OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | grep -E '✓ Built|√ Built')
           echo "Sortie build grep : $OUTPUT"
 
           # Récupérer la 3e colonne comme chemin
           BUILT_PATH=$(echo "$OUTPUT" | awk '{print $3}')
           # Optionnel : convertir \ en / pour compatibilité bash
           BUILT_PATH_CLEAN=$(echo "$BUILT_PATH" | sed 's|\\|/|g')
-          echo "Sortie build awk : $BUILT_PATH"
-          echo "Sortie build clean : $BUILT_PATH_CLEAN"
-          echo "BUILT_PATH=$BUILT_PATH_CLEAN" >> $GITHUB_ENV
 
           # Extraire le dossier parent
           PARENT_DIR=$(dirname "$BUILT_PATH_CLEAN")
           echo "PARENT_DIR=$PARENT_DIR" >> $GITHUB_ENV
-          cat build.log
+          echo "Chemin parent du build : $PARENT_DIR"
 
       #### Partie 2 : Archiver les artefacts de la build debug ####
       # 1️⃣ - Archiver les artefacts de la build pour la plateforme spécifiée
@@ -76,7 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: flutter-build-${{ inputs.platform }}
-          path: ${{ env.BUILT_PATH }}
+          path: ${{ env.PARENT_DIR }}
 
       #### Partie 2' : Constructions & archivage des artifacts de release ####
       ### Windows installer build Steps ###
