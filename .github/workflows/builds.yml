@@ -9,8 +9,7 @@ on:
         type: string
         description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
       mode:
-        required: false
-        default: 'debug' # Par défaut, on build en debug
+        required: true
         type: string
         description: "release ou debug"
 

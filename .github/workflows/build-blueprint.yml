@@ -13,8 +13,7 @@ on:
         type: string
         description: "os à utiliser pour builder"
       mode:
-        required: false
-        default: 'debug' # Par défaut, on build en debug
+        required: true
         type: string
         description: "release ou debug"
 
@@ -36,10 +35,10 @@ jobs:
           flutter-version-file: pubspec.yaml
           cache: true # Active le cache pub + flutter automatiquement
 
-      # 3️⃣ - Récupérer les dépendances Dart/Flutter 
+      # 3️⃣ - Récupérer les dépendances Dart/Flutter
       - name: Install dependencies
         run: flutter pub get
-      
+
       # 3️⃣bis - Automatisation de la création des icônes par flutter_launcher_icons
       - name: Création des icônes
         run: flutter pub run flutter_launcher_icons:main
