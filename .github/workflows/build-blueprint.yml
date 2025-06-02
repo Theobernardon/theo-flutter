@@ -13,7 +13,8 @@ on:
         type: string
         description: "os à utiliser pour builder"
       mode:
-        required: true
+        required: false
+        default: 'debug' # Par défaut, on build en debug
         type: string
         description: "release ou debug"
 
