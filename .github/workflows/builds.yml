@@ -53,7 +53,6 @@ jobs:
       #  with:
       #    platform: ${{ matrix.platform }}
       #    mode: ${{ inputs.mode }} # release ou debug
-      steps:
       #### Partie 1 : Préparation ####
       # 1️⃣ - Cloner ton code source
       - name: Checkout code
