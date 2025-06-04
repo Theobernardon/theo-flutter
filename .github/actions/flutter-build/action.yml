@@ -1,0 +1,31 @@
+name: Build Flutter
+inputs:
+  platform:
+    description: "Plateforme cible"
+    required: true
+  mode:
+    description: "Mode de compilation"
+    required: true
+outputs:
+  parent-dir:
+    description: "Dossier parent du build"
+runs:
+  using: composite
+  steps:
+    - id: build
+      shell: bash
+      run: |
+        # Build et récupère la ligne avec "Built" (unicode OK pour "✓" ou "√")
+        OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | grep -E '✓ Built|√ Built')
+
+        # Récupérer la 3e colonne comme chemin
+        BUILT_PATH=$(echo "$OUTPUT" | awk '{print $3}')
+        # Optionnel : convertir \ en / pour compatibilité bash
+        BUILT_PATH_CLEAN=$(echo "$BUILT_PATH" | sed 's|\\|/|g')
+
+        # Extraire le dossier parent
+        PARENT_DIR=$(dirname "$BUILT_PATH_CLEAN")
+
+        # Enregistrer le chemin parent dans les outputs et l'environnement GitHub
+        echo "parent-dir=$PARENT_DIR" >> "$GITHUB_OUTPUT"
+        echo "PARENT_DIR=$PARENT_DIR" >> "$GITHUB_ENV"

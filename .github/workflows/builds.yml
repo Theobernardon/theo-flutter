@@ -83,21 +83,11 @@ jobs:
 
       # 5️⃣ - Builder l'application pour la plateforme spécifiée
       - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
-        shell: bash
-        run: |
-          # Build et récupère la ligne avec "Built" (unicode OK pour "✓" ou "√")
-          OUTPUT=$(flutter build ${{ matrix.platform }} --${{ inputs.mode }} | grep -E '✓ Built|√ Built')
-          echo "Sortie build grep : $OUTPUT"
-
-          # Récupérer la 3e colonne comme chemin
-          BUILT_PATH=$(echo "$OUTPUT" | awk '{print $3}')
-          # Optionnel : convertir \ en / pour compatibilité bash
-          BUILT_PATH_CLEAN=$(echo "$BUILT_PATH" | sed 's|\\|/|g')
-
-          # Extraire le dossier parent
-          PARENT_DIR=$(dirname "$BUILT_PATH_CLEAN")
-          echo "PARENT_DIR=$PARENT_DIR" >> $GITHUB_ENV
-          echo "Chemin parent du build : $PARENT_DIR"
+        id: build
+        uses: Theobernardon/theo-flutter/.github/actions/flutter-build@main
+        with:
+          platform: ${{ matrix.platform }}
+          mode: ${{ inputs.mode }}
 
       #### Partie 2 : Archiver les artefacts de la build debug ####
       # 1️⃣ - Archiver les artefacts de la build pour la plateforme spécifiée
