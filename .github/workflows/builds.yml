@@ -22,12 +22,12 @@ jobs:
       # Exclusions des plateformes pour chaque OS
         exclude:
           # Exclusions des windows:
-          - platform: linux
-            os: windows-latest
-          - platform: macos
-            os: windows-latest
-          - platform: ios
-            os: windows-latest
+          - platform: linux        # Table des exclusions pour les plateformes
+            os: windows-latest     # O --> valid | X --> excluded
+          - platform: macos        #         |linux|windows|macos|ios|web|apk|
+            os: windows-latest     # linux   |  O  |   X   |  X  | X | O | O |
+          - platform: ios          # windows |  X  |   O   |  X  | X | X | X |
+            os: windows-latest     # macos   |  X  |   X   |  O  | O | X | X |
           - platform: web
             os: windows-latest
           - platform: apk
@@ -70,7 +70,7 @@ jobs:
 
       # 3️⃣bis - Automatisation de la création des icônes par flutter_launcher_icons
       - name: Création des icônes
-        run: flutter pub run flutter_launcher_icons #:main voir pk main et si garder?
+        run: dart run flutter_launcher_icons
 
       # 4️⃣ - Installer les dépendances nécessaires pour Linux si on build sur Linux
       - name: Installer les dépendances Linux
