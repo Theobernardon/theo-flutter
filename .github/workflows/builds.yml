@@ -23,16 +23,20 @@ jobs:
       - name: Choix de l'os
         id: setup-os
         run: |
-          if [[ "${{ matrix.platform }}" == linux || apk || web ]]; then
-            echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.platform }}" == windows ]]; then
-            echo "os=windows-latest" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.platform }}" == macos || ios ]]; then
-            echo "os=macos-latest" >> $GITHUB_OUTPUT
+          if [[ "${{ matrix.platform }}" == "linux" || \
+                "${{ matrix.platform }}" == "apk"   || \
+                "${{ matrix.platform }}" == "web" ]]; then
+              echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.platform }}" == "windows" ]]; then
+              echo "os=windows-latest" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.platform }}" == "macos"  || \
+                  "${{ matrix.platform }}" == "ios" ]]; then
+              echo "os=macos-latest" >> $GITHUB_OUTPUT
           else
-            echo "os=none" >> $GITHUB_OUTPUT
+              echo "os=none" >> $GITHUB_OUTPUT
           fi
-      - uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
+
+      - uses: Theobernardon/theo-flutter/.github/actions/flutter-builder@main
         with:
           platform: ${{ matrix.platform }}
           os: ${{ steps.setup-os.outputs.os }}
