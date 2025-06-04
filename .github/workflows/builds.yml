@@ -23,11 +23,11 @@ jobs:
       - name: Choix de l'os
         id: setup-os
         run: |
-          if [[ "${{ matrix.platform }}" == linux | apk | web ]]; then
+          if [[ "${{ matrix.platform }}" == linux || apk || web ]]; then
             echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
           elif [[ "${{ matrix.platform }}" == windows ]]; then
             echo "os=windows-latest" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.platform }}" == macos | ios ]]; then
+          elif [[ "${{ matrix.platform }}" == macos || ios ]]; then
             echo "os=macos-latest" >> $GITHUB_OUTPUT
           else
             echo "os=none" >> $GITHUB_OUTPUT
