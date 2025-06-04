@@ -13,51 +13,27 @@ on:
         type: string
         description: "release ou debug"
 
-jobs:
-  windows:
-    if: contains(inputs.platforms, 'windows')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
-    with:
-      platform: windows
-      os: windows-latest
-      mode: ${{ inputs.mode }} # release ou debug
-
-  linux:
-    if: contains(inputs.platforms, 'linux')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
-    with:
-      platform: linux
-      os: ubuntu-latest
-      mode: ${{ inputs.mode }}
-
-  macos:
-    if: contains(inputs.platforms, 'macos')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
-    with:
-      platform: macos
-      os: macos-latest
-      mode: ${{ inputs.mode }}
-
-  apk:
-    if: contains(inputs.platforms, 'apk' || contains(inputs.platforms, 'android'))
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
-    with:
-      platform: apk
-      os: ubuntu-latest
-      mode: ${{ inputs.mode }}
-
-  ios:
-    if: contains(inputs.platforms, 'ios')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
-    with:
-      platform: ios
-      os: macos-latest
-      mode: ${{ inputs.mode }}
-
-  web:
-    if: contains(inputs.platforms, 'web')
-    uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
-    with:
-      platform: web
-      os: ubuntu-latest
-      mode: ${{ inputs.mode }}
+jobs:  
+  matrix:
+    strategy:
+      matrix:
+        platform: ${{ inputs.platforms }} # linux, windows, macos, apk, ios, web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Choix de l'os
+        id: setup-os
+        run: |
+          if [[ "${{ matrix.platform }}" == linux | apk | web ]]; then
+            echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.platform }}" == windows ]]; then
+            echo "os=windows-latest" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.platform }}" == macos | ios ]]; then
+            echo "os=macos-latest" >> $GITHUB_OUTPUT
+          else
+            echo "os=none" >> $GITHUB_OUTPUT
+          fi
+      - uses: ./.github/workflows/build-blueprint.yml
+        with:
+          platform: ${{ matrix.platform }}
+          os: ${{ steps.setup-os.outputs.os }}
+          mode: ${{ inputs.mode }} # release ou debug
