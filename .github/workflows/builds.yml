@@ -17,8 +17,9 @@ jobs:
   matrix:
     strategy:
       matrix:
-        platform: ${{ fromJson(matrix.platforms) }} # '["linux", "windows", "macos", "apk", "ios", "web"]'
+        platform: ${{ fromJson(inputs.platforms) }} # '["linux", "windows", "macos", "apk", "ios", "web"]'
         os: [ubuntu-latest, windows-latest, macos-latest]
+      # Exclusions des plateformes pour chaque OS
         exclude:
           # Exclusions des windows:
           - platform: linux
@@ -49,10 +50,6 @@ jobs:
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
-      #- uses: Theobernardon/theo-flutter/.github/actions/flutter-builder@main
-      #  with:
-      #    platform: ${{ matrix.platform }}
-      #    mode: ${{ inputs.mode }} # release ou debug
       #### Partie 1 : Préparation ####
       # 1️⃣ - Cloner ton code source
       - name: Checkout code
