@@ -18,26 +18,38 @@ jobs:
     strategy:
       matrix:
         platform: ${{ fromJson(inputs.platforms) }} # '["linux", "windows", "macos", "apk", "ios", "web"]'
-    runs-on: ubuntu-latest
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        exclude:
+          # Exclusions des windows:
+          - platform: linux
+            os: windows-latest
+          - platform: macos
+            os: windows-latest
+          - platform: ios
+            os: windows-latest
+          - platform: web
+            os: windows-latest
+          - platform: apk
+            os: windows-latest
+          # Exclusions des macos:
+          - platform: linux
+            os: macos-latest
+          - platform: windows
+            os: macos-latest
+          - platform: web
+            os: macos-latest
+          - platform: apk
+            os: macos-latest
+          # Exclusions des linux:
+          - platform: windows
+            os: ubuntu-latest
+          - platform: macos
+            os: ubuntu-latest
+          - platform: ios
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Choix de l'os
-        id: setup-os
-        run: |
-          if [[ "${{ matrix.platform }}" == "linux" || \
-                "${{ matrix.platform }}" == "apk"   || \
-                "${{ matrix.platform }}" == "web" ]]; then
-              echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.platform }}" == "windows" ]]; then
-              echo "os=windows-latest" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.platform }}" == "macos"  || \
-                  "${{ matrix.platform }}" == "ios" ]]; then
-              echo "os=macos-latest" >> $GITHUB_OUTPUT
-          else
-              echo "os=none" >> $GITHUB_OUTPUT
-          fi
-
       - uses: Theobernardon/theo-flutter/.github/actions/flutter-builder@main
         with:
           platform: ${{ matrix.platform }}
-          os: ${{ steps.setup-os.outputs.os }}
           mode: ${{ inputs.mode }} # release ou debug
