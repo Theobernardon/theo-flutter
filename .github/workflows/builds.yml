@@ -32,7 +32,7 @@ jobs:
           else
             echo "os=none" >> $GITHUB_OUTPUT
           fi
-      - uses: ./.github/workflows/build-blueprint.yml
+      - uses: Theobernardon/theo-flutter/.github/workflows/build-blueprint.yml@main
         with:
           platform: ${{ matrix.platform }}
           os: ${{ steps.setup-os.outputs.os }}
