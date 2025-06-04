@@ -51,6 +51,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.platform }} (${{ inputs.mode }})
     steps:
+      # Vérification des correspondances platform / os
+      - name: Debug matrix context
+        run: echo "platform=${{ matrix.platform }}, os=${{ matrix.os }}"
+
       #### Partie 1 : Préparation ####
       # 1️⃣ - Cloner ton code source
       - name: Checkout code
