@@ -49,6 +49,7 @@ jobs:
           - platform: ios
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.platform }} (${{ inputs.mode }})
     steps:
       #### Partie 1 : Préparation ####
       # 1️⃣ - Cloner ton code source

@@ -1,4 +1,4 @@
-name: Builder Flutter Workflow Réutilisable
+name: Release Flutter Workflow Réutilisable
 
 on:
   workflow_call:
@@ -6,67 +6,38 @@ on:
       platforms:
         required: true
         type: string
-        description: "Liste des plateformes à builder, séparées par des virgules (ex: apk, ios, web)"
+        description: "Liste des plateformes à builder (ex: '[\"linux\", \"windows\"]')"
     secrets:
       token:
         required: true
         description: "Token d'authentification pour GitHub Actions"
 
-jobs:
-  All-select:
+jobs:  
+  matrix:
+    strategy:
+      matrix:
+        platform: ${{ fromJson(inputs.platforms) }} # '["linux", "windows", "macos", "apk", "ios", "web"]'
     runs-on: ubuntu-latest
+    name: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
-      #### Partie 1 : Builds downloads ####
-      - name: Download Windows Build
-        if: contains(inputs.platforms, 'windows')
+      # Partie 1 : Builds downloads
+      - name: Download ${{ matrix.platform }} Build
         uses: actions/download-artifact@v4
         with:
-          name: flutter-build-windows
-          path: artifacts/flutter-build-windows
+          name: flutter-build-${{ matrix.platform }}
+          path: artifacts/flutter-build-${{ matrix.platform }}
 
-      - name: Download Linux Build
-        if: contains(inputs.platforms, 'linux')
-        uses: actions/download-artifact@v4
-        with:
-          name: flutter-build-linux
-          path: artifacts/flutter-build-linux
+      - name: Vérifier l’artefact téléchargé
+        run: ls -lh artifacts/flutter-build-${{ matrix.platform }}/
 
-      - name: Download MacOS Build
-        if: contains(inputs.platforms, 'macos')
-        uses: actions/download-artifact@v4
-        with:
-          name: flutter-build-macos
-          path: artifacts/flutter-build-macos
-
-      - name: Download APK Build
-        if: contains(inputs.platforms, 'apk') || contains(inputs.platforms, 'android')
-        uses: actions/download-artifact@v4
-        with:
-          name: flutter-build-apk
-          path: artifacts/flutter-build-apk
-
-      - name: Download iOS Build
-        if: contains(inputs.platforms, 'ios')
-        uses: actions/download-artifact@v4
-        with:
-          name: flutter-build-ios
-          path: artifacts/flutter-build-ios
-
-      - name: Download Web Build
-        if: contains(inputs.platforms, 'web')
-        uses: actions/download-artifact@v4
-        with:
-          name: flutter-build-web
-          path: artifacts/flutter-build-web
-
-      #### Partie : Release construction ####
+      # Partie 2 : Release construction
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          files: artifacts/flutter-build-**/**
+          files: artifacts/flutter-build-${{ matrix.platform }}/**
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
