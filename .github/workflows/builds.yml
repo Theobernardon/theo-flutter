@@ -17,7 +17,7 @@ jobs:
   matrix:
     strategy:
       matrix:
-        platform: ${{ fromJson(inputs.platforms) }} # '[\"linux\", \"windows\", \"macos\", \"apk\", \"ios\", \"web\"]'
+        platform: ${{ fromJson(inputs.platforms) }} # '["linux", "windows", "macos", "apk", "ios", "web"]'
     runs-on: ubuntu-latest
     steps:
       - name: Choix de l'os
