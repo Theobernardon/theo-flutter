@@ -25,10 +25,14 @@ jobs:
       - name: "Install dependencies"
         run: flutter pub get
 
-      # 4️⃣ - Vérifier que le code est propre (analyse statique)
-      - id: Analyze-code
+      # 4️⃣ - Vérifiez que le code est proprement formaté
+      - name: "Format code"
+        run: flutter format --set-exit-if-changed .
+
+      # 5️⃣ - Vérifier que le code est propre (analyse statique)
+      - name: "Analyze code"
         run: flutter analyze
 
-      # 5️⃣ - Lancer les tests unitaires
-      - id: Run-tests
+      # 6️⃣ - Exécuter les tests unitaires
+      - name: "Run tests"
         run: flutter test
