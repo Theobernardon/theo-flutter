@@ -103,6 +103,6 @@ jobs:
       # 2️⃣ - Archiver les artefacts de la build release
       - name: Archive ${{ matrix.platform }} build artifacts (release only)
         if: ${{ success() && inputs.mode == 'release' }}
-        uses: Theobernardon/theo-flutter/.github/actions/package-plateforme@main
+        uses: Theobernardon/theo-flutter/.github/actions/package-builds-release@main
         with:
           platform: ${{ matrix.platform }}
