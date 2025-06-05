@@ -3,15 +3,12 @@ inputs:
   platform:
     required: true
     description: "Plateforme cible"
-  mode:
-    required: true
-    description: "Mode de compilation"
 runs:
   using: composite
   steps:
     # Packaging Windows
     - name: Install Inno Setup (Windows)
-      if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
+      if: ${{ inputs.platform == 'windows' }}
       run: choco install innosetup -y
 
     - name: Format repo name for setup file name (Windows)
@@ -27,7 +24,7 @@ runs:
         echo "setup_name=$setupName" >> $env:GITHUB_OUTPUT
 
     - name: Create Installer (Windows)
-      if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
+      if: ${{ inputs.platform == 'windows' }}
       run: |
         ISCC |
         /DMyAppVersion=${{ github.ref_name }} |
@@ -35,7 +32,7 @@ runs:
         installer.iss
 
     - name: Archive windows build artifacts (Windows)
-      if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
+      if: ${{ inputs.platform == 'windows' }}
       uses: actions/upload-artifact@v4
       with:
         name: flutter-build-windows
@@ -43,10 +40,10 @@ runs:
 
     # Packaging Linux
     - name: Archive Linux bundle (Linux)
-      if: ${{ inputs.platform == 'linux' && inputs.mode == 'release' }}
+      if: ${{ inputs.platform == 'linux' }}
       run: tar -czf flutter-linux.tar.gz -C build/linux/x64/release/bundle .
     - name: Upload Linux artifact (Linux)
-      if: ${{ inputs.platform == 'linux' && inputs.mode == 'release' }}
+      if: ${{ inputs.platform == 'linux' }}
       uses: actions/upload-artifact@v4
       with:
         name: flutter-build-linux
