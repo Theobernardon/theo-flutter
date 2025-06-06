@@ -7,10 +7,6 @@ on:
         required: true
         type: string
         description: "Nom de la branche à mettre à jour"
-    secrets:
-      token:
-        required: true
-        description: "Token d'authentification pour GitHub Actions"
 
 jobs:
   bump:

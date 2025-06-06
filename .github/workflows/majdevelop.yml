@@ -1,0 +1,56 @@
+name: Update branch develop from main
+
+on:
+  workflow_call:
+
+jobs:
+  synchronisation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0 # Important pour récupérer tout l’historique
+
+      - name: Setup Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch develop
+        run: |
+          if git ls-remote --heads origin develop | grep develop; then
+            git fetch origin develop:develop
+          else
+            echo "::error ::La branche develop n’existe pas sur origin. Arrêt du workflow."
+            exit 1
+          fi
+
+      - name: Merge main into develop
+        id: merge
+        run: |
+          git checkout develop
+          git merge origin/main -m "chore(sync): merge main into develop [CI]" || echo "CONFLICT" > merge-status.txt
+          if [ -f merge-status.txt ]; then
+            echo "result=CONFLICT" >> $GITHUB_OUTPUT
+          else
+            echo "result=SUCCESS" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push or create pull request
+        if: success()
+        run: |
+          if [ -f merge-status.txt ]; then
+            echo "Conflit détecté, création d’une pull request."
+          else
+            git push origin develop
+          fi
+
+      - name: Create Pull Request if conflict
+        if: ${{ steps.merge.outputs.result == 'CONFLICT' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: develop-sync
+          base: develop
+          title: "Sync main into develop (manual conflict resolution required)"
+          body: "Un conflit a été détecté lors de la synchronisation automatique de main dans develop. Merci de résoudre le conflit manuellement."
