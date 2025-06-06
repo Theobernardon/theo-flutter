@@ -51,16 +51,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.platform }} (${{ inputs.mode }})
     steps:
-      # Vérification des correspondances platform / os
-      - name: Debug matrix context
-        run: echo "platform=${{ matrix.platform }}, os=${{ matrix.os }}"
-
       #### Partie 1 : Préparation ####
       # 1️⃣ - Cloner ton code source
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
+      # 2️⃣ - Actions de formatage différentes selon les plates formes
+      - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
+        id: build
+        uses: Theobernardon/theo-flutter/.github/actions/pre-steps-spe-platform@main
+        with:
+          platform: ${{ matrix.platform }}
+          mode: ${{ inputs.mode }}
+
+      # 3️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -68,22 +72,15 @@ jobs:
           flutter-version-file: pubspec.yaml
           cache: true # Active le cache pub + flutter automatiquement
 
-      # 3️⃣ - Récupérer les dépendances Dart/Flutter
+      # 4️⃣ - Récupérer les dépendances Dart/Flutter
       - name: Installer les dépendances flutter
         run: flutter pub get
 
-      # 3️⃣bis - Automatisation de la création des icônes par flutter_launcher_icons
+      # 5️⃣ - Automatisation de la création des icônes par flutter_launcher_icons
       - name: Création des icônes
         run: dart run flutter_launcher_icons
 
-      # 4️⃣ - Installer les dépendances nécessaires pour Linux si on build sur Linux
-      - name: Installer les dépendances Linux
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libglib2.0-dev
-
-      # 5️⃣ - Builder l'application pour la plateforme spécifiée
+      # 6️⃣ - Builder l'application pour la plateforme spécifiée
       - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
         id: build
         uses: Theobernardon/theo-flutter/.github/actions/flutter-build@main
