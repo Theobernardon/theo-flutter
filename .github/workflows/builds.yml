@@ -58,7 +58,6 @@ jobs:
 
       # 2️⃣ - Actions de formatage différentes selon les plates formes
       - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
-        id: build
         uses: Theobernardon/theo-flutter/.github/actions/pre-steps-spe-platform@main
         with:
           platform: ${{ matrix.platform }}
