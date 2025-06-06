@@ -11,6 +11,7 @@ runs:
   steps:
     #### Installer les dépendances nécessaires pour Linux si on build sur Linux ####
     - name: Installer les dépendances Linux
+      shell: bash
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         sudo apt-get update
@@ -19,6 +20,7 @@ runs:
     #### Exécution de icônes installeur generator si Windows et release ####
     # Importation de Python avec cache
     - name: Importer Python
+      shell: bash
       if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
       uses: actions/setup-python@v4
       with:
@@ -26,11 +28,13 @@ runs:
         cache: "pip"
     # Installer les dépendances Python nécessaires
     - name: Installer les dépendances Python
+      shell: bash
       if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade Pillow
     # Exécuter le script Python pour générer les icônes de l'installeur
     - name: Exécuter icônes installeur generator
+      shell: bash
       if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
       run: python assets\images\icon_instaleur_generator.py
