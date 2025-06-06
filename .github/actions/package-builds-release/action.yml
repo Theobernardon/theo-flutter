@@ -26,7 +26,7 @@ runs:
 
     - name: Create Installer (Windows)
       if: ${{ inputs.platform == 'windows' }}
-      shell: bash
+      shell: pwsh
       run: ISCC /DMyAppVersion=${{ github.ref_name }} /DMyAppSetupName=${{ steps.format_name.outputs.setup_name }} installer.iss
 
     - name: Archive windows build artifacts (Windows)
