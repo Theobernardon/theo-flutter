@@ -14,7 +14,7 @@ on:
 
 jobs:
   bump:
-    if: ${{ contains( inputs.branch_name , 'release') || contains( inputs.branch_name , '-hotfix-') }}
+    if: ${{ contains( inputs.branch_name , 'release') || contains( inputs.branch_name , 'hotfix') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
           if ${{ contains( inputs.branch_name , 'release') }}; then
             echo "Bumping version for release branch"
             dart pub global run cider bump minor 
-          elif ${{ contains( inputs.branch_name , '-hotfix-') }}; then
+          elif ${{ contains( inputs.branch_name , 'hotfix') }}; then
             echo "Bumping version for hotfix branch"
             dart pub global run cider bump patch 
           else
