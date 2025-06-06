@@ -9,6 +9,7 @@ inputs:
 outputs:
   parent-dir:
     description: "Dossier parent du build"
+    value: ${{ steps.build.outputs.parent-dir }}
 runs:
   using: composite
   steps:
