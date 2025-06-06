@@ -91,6 +91,9 @@ jobs:
           platform: ${{ matrix.platform }}
           mode: ${{ inputs.mode }}
 
+      - name: Debug output parent-dir
+        run: echo "Parent dir is ${{ steps.build.outputs.parent-dir }}"
+
       #### Partie 2 : Archiver les artefacts ####
       # 1️⃣ - Archiver les artefacts de la build debug
       - name: Archive ${{ matrix.platform }} build artifacts (debug only)
