@@ -1,0 +1,52 @@
+name: Récupération de la version et création du Tag
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: "Version du package"
+        value: ${{ jobs.tag_main.outputs.version }}
+
+jobs:
+  tag_main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0 # Important to fetch all history for tagging
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Install Cider
+        run: dart pub global activate cider
+
+      - name: Get version from pubspec
+        id: get_version
+        run: echo "version=$(dart pub global run cider version)" >> $GITHUB_OUTPUT
+
+      - name: Check if tag already exists on remote
+        id: tag_check
+        run: |
+          TAG="v${{ steps.get_version.outputs.version }}"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "Tag $TAG already exists on remote. Failing job."
+            exit 1
+          else
+            echo "Tag $TAG does not exist, proceeding."
+          fi
+
+      - name: Check changelog unreleased section
+        run: |
+          if grep -q "## Unreleased" CHANGELOG.md; then
+          echo "Warning: CHANGELOG.md contains 'Unreleased' section. Please finalize the changelog before tagging."
+          exit 1
+          fi
+
+      - name: Tag and push main
+        run: |
+          TAG="v${{ steps.get_version.outputs.version }}"
+          git tag $TAG
+          git push origin $TAG
