@@ -28,5 +28,6 @@ runs:
     # Exécuter le script Python pour générer les icônes de l'installeur
     - name: Exécuter icônes installeur generator
       shell: bash
+      working-directory: assets/images
       if: ${{ inputs.platform == 'windows' && inputs.mode == 'release' }}
-      run: python assets\images\icon_instaleur_generator.py
+      run: python icon_instaleur_generator.py
