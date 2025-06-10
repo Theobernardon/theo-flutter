@@ -1,4 +1,5 @@
 import os
+import re
 import yaml
 
 DIR = ".github\\ISSUE_TEMPLATE"
@@ -22,9 +23,10 @@ def edit_yaml_files(number_projet, personas=None, directory=DIR):
 
         # Modification du nombre du projet
         if bool(number_projet):
-            data["projects"] = data["projects"].replace(
-                "Projet_number", str(number_projet)
+            data["projects"] = re.sub(
+                r"(?<=/).*", number_projet, data["projects"], count=1
             )
+            print("Numéro de projet modifié.")
 
         # Modification des personas
         if bool(personas):
@@ -35,6 +37,7 @@ def edit_yaml_files(number_projet, personas=None, directory=DIR):
         # save yml
         with open(filepath, "w", encoding="utf-8") as file:
             yaml.dump(data, file, sort_keys=False, allow_unicode=True)
+            print("Fichier sauvegardé.\n")
 
 
 if __name__ == "__main__":
