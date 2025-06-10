@@ -1,0 +1,5 @@
+personas: [
+    "NomPersona1 – description de persona1",
+    "NomPersona2 – description de persona2",
+    # ...
+  ]
