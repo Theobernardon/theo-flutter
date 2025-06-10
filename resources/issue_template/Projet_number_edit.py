@@ -8,11 +8,11 @@ DIR = ".github\\ISSUE_TEMPLATE"
 def edit_yaml_files(number_projet, directory=DIR):
     yaml_files = [f for f in os.listdir(directory) if f.endswith((".yaml", ".yml"))]
 
-    data = None
+    # itération sur les fichiers YAML
     for filename in yaml_files:
         filepath = os.path.join(directory, filename)
 
-        # Import du fichier Yamel
+        # Import du fichier Yaml
         with open(filepath, "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
