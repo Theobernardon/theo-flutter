@@ -4,6 +4,10 @@ Ce dépôt contient **`new_flutter_project.ipynb`**, un notebook Jupyter permett
 
 Les diagrammes présents dans [`_Document`](./_Document) illustrent l’organisation GitHub/Git adoptée et la place de ce générateur dans la gestion de projet.
 
+![Schéma CI/CD](./_Document/Projet%20CICD.drawio.png)
+
+Ce schéma détaille les différentes étapes de l’intégration continue (tests et builds) ainsi que celles du déploiement continu (création d’une release puis mise à disposition des artefacts). Il fournit un aperçu global du pipeline configuré par les workflows décrits ci-dessous.
+
 ## Prérequis
 
 Installez les dépendances suivantes :
@@ -42,7 +46,7 @@ Installez les dépendances suivantes :
 
 ## Automatisations principales
 
-Le notebook met en place plusieurs automatisations :
+Le notebook met en place plusieurs automatisations :
 
 - **Workflows GitHub Actions** pour tester, builder et publier l’application.
 - **Templates d’issues** (feature, subfeature, bug, fix, hotfix, documentation) afin d’uniformiser la création des tickets.
@@ -50,6 +54,28 @@ Le notebook met en place plusieurs automatisations :
 - **Configuration d’Inno Setup** pour créer un installateur Windows lorsque la plateforme `windows` est sélectionnée.
 
 Ces automatisations facilitent la gestion du cycle de vie de l’application Flutter et la collaboration au sein de votre équipe.
+
+## Workflows CI/CD
+
+Les fichiers de workflow se trouvent dans [`.github/workflows`](./.github/workflows) et reposent sur des actions personnalisées situées dans [`.github/actions`](./.github/actions).
+
+### `test-flutter.yml`
+Workflow réutilisable réalisant l’analyse statique du projet puis l’exécution des tests unitaires. Il peut être appelé depuis d’autres workflows pour garantir la qualité du code avant toute étape de build ou de déploiement.
+
+### `builds.yml`
+Déclenché avec une liste de plateformes et un mode (`debug` ou `release`), il installe Flutter, prépare l’environnement via l’action `pre-steps-spe-platform`, compile l’application grâce à `flutter-build` et archive les artefacts à l’aide de `package-builds-release`.
+
+### `release.yml`
+Récupère les artefacts produits par `builds.yml` et crée la release GitHub correspondante à la version passée en paramètre. Un token GitHub est nécessaire pour publier la release.
+
+### `majdevelop.yml`
+Synchronise automatiquement la branche `develop` avec `main`. En cas de conflit lors du merge, une pull request est ouverte pour permettre une résolution manuelle.
+
+### `majpubspec.yml`
+Incrémente la version déclarée dans `pubspec.yaml` (mineure sur une branche `release`, patch sur une branche `hotfix`), génère le `CHANGELOG.md` puis pousse la modification.
+
+### `tag-version.yml`
+Lit la version actuelle dans `pubspec.yaml`, vérifie l’absence du tag associé sur le dépôt et crée ce tag sur `main`.
 
 ---
 
