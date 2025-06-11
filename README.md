@@ -4,7 +4,7 @@ Ce dépôt contient **`new_flutter_project.ipynb`**, un notebook Jupyter permett
 
 Les diagrammes présents dans [`_Document`](./_Document) illustrent l’organisation GitHub/Git adoptée et la place de ce générateur dans la gestion de projet.
 
-![Schéma CI/CD](_Document\Projet%20CICD%20sombre.drawio.png)
+![Schéma CI/CD](./_Document/Projet%20CICD%20sombre.drawio.png)
 
 Ce schéma détaille les différentes étapes de l’intégration continue (tests et builds) ainsi que celles du déploiement continu (création d’une release puis mise à disposition des artefacts). Il fournit un aperçu global du pipeline configuré par les workflows décrits ci-dessous.
 
@@ -39,7 +39,7 @@ Installez les dépendances suivantes :
 
 ## Stratégie Git/GitHub
 
-![Schéma CI/CD](_Document\cycle%20de%20vie%20des%20branches%20darck.drawio.png)
+![Schéma CI/CD](./_Document/cycle%20de%20vie%20des%20branches%20darck.drawio.png)
 
 - `main` : reçoit uniquement les hotfix et les pull requests de release.
 - `develop` : branche de travail sur laquelle sont fusionnées les branches `fix` et `feat` jusqu’à obtention d’une version stable.
