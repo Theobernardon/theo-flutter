@@ -4,7 +4,7 @@ Ce dépôt contient **`new_flutter_project.ipynb`**, un notebook Jupyter permett
 
 Les diagrammes présents dans [`_Document`](./_Document) illustrent l’organisation GitHub/Git adoptée et la place de ce générateur dans la gestion de projet.
 
-![Schéma CI/CD](./_Document/Projet%20CICD.drawio.png)
+![Schéma CI/CD](_Document\Projet%20CICD%20sombre.drawio.png)
 
 Ce schéma détaille les différentes étapes de l’intégration continue (tests et builds) ainsi que celles du déploiement continu (création d’une release puis mise à disposition des artefacts). Il fournit un aperçu global du pipeline configuré par les workflows décrits ci-dessous.
 
@@ -39,6 +39,8 @@ Installez les dépendances suivantes :
 
 ## Stratégie Git/GitHub
 
+![Schéma CI/CD](_Document\cycle%20de%20vie%20des%20branches%20darck.drawio.png)
+
 - `main` : reçoit uniquement les hotfix et les pull requests de release.
 - `develop` : branche de travail sur laquelle sont fusionnées les branches `fix` et `feat` jusqu’à obtention d’une version stable.
 - `release/*` : préparation d’une version stable avant intégration dans `main`.
@@ -60,21 +62,27 @@ Ces automatisations facilitent la gestion du cycle de vie de l’application Flu
 Les fichiers de workflow se trouvent dans [`.github/workflows`](./.github/workflows) et reposent sur des actions personnalisées situées dans [`.github/actions`](./.github/actions).
 
 ### `test-flutter.yml`
+
 Workflow réutilisable réalisant l’analyse statique du projet puis l’exécution des tests unitaires. Il peut être appelé depuis d’autres workflows pour garantir la qualité du code avant toute étape de build ou de déploiement.
 
 ### `builds.yml`
+
 Déclenché avec une liste de plateformes et un mode (`debug` ou `release`), il installe Flutter, prépare l’environnement via l’action `pre-steps-spe-platform`, compile l’application grâce à `flutter-build` et archive les artefacts à l’aide de `package-builds-release`.
 
 ### `release.yml`
+
 Récupère les artefacts produits par `builds.yml` et crée la release GitHub correspondante à la version passée en paramètre. Un token GitHub est nécessaire pour publier la release.
 
 ### `majdevelop.yml`
+
 Synchronise automatiquement la branche `develop` avec `main`. En cas de conflit lors du merge, une pull request est ouverte pour permettre une résolution manuelle.
 
 ### `majpubspec.yml`
+
 Incrémente la version déclarée dans `pubspec.yaml` (mineure sur une branche `release`, patch sur une branche `hotfix`), génère le `CHANGELOG.md` puis pousse la modification.
 
 ### `tag-version.yml`
+
 Lit la version actuelle dans `pubspec.yaml`, vérifie l’absence du tag associé sur le dépôt et crée ce tag sur `main`.
 
 ---
