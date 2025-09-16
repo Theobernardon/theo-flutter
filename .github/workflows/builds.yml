@@ -22,12 +22,12 @@ jobs:
         # Exclusions des plateformes pour chaque OS
         exclude:
           # Exclusions des windows:
-          - platform: linux # Table des exclusions pour les plateformes
-            os: windows-latest # O --> valid | X --> excluded
-          - platform: macos #         |linux|windows|macos|ios|web|apk|
-            os: windows-latest # linux   |  O  |   X   |  X  | X | O | O |
-          - platform: ios # windows |  X  |   O   |  X  | X | X | X |
-            os: windows-latest # macos   |  X  |   X   |  O  | O | X | X |
+          - platform: linux #    Table des exclusions pour les plateformes
+            os: windows-latest #        O --> valid | X --> excluded
+          - platform: macos #    |        |linux|windows|macos|ios|web|apk|
+            os: windows-latest # |linux   |  O  |   X   |  X  | X | O | O |
+          - platform: ios #      |windows |  X  |   O   |  X  | X | X | X |
+            os: windows-latest # |macos   |  X  |   X   |  O  | O | X | X |
           - platform: web
             os: windows-latest
           - platform: apk
