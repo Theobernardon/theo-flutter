@@ -10,7 +10,7 @@ on:
 
 jobs:
   bump:
-    if: ${{ contains( inputs.branch_name , 'release') || contains( inputs.branch_name , 'hotfix') }}
+    if: ${{ contains( inputs.branch_name , 'release') || contains( inputs.branch_name , 'fix') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,32 +22,16 @@ jobs:
       - name: Install Cider
         run: dart pub global activate cider
 
-      - name: Bump version and release
-        id: extract_version
-        run: |
-          # Bump the version based on the branch name
-          if ${{ contains( inputs.branch_name , 'release') }}; then
-            echo "Bumping version for release branch"
-            dart pub global run cider bump minor 
-          elif ${{ contains( inputs.branch_name , 'hotfix') }}; then
-            echo "Bumping version for hotfix branch"
-            dart pub global run cider bump patch 
-          else
-            echo "No version bump needed for this branch"
-            exit 0
-          fi
-
-          # Generate changelog and prepare the release
-          cider release
-
-          # Extract the new version from pubspec.yaml
-          VERSION=$(dart pub global run cider version)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Bump version
+        id: bump-version
+        uses: Theobernardon/theo-flutter/.github/actions/bump-version@main
+        with:
+          branch_name: ${{ inputs.branch_name }}
 
       - name: Commit and push version bump
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pubspec.yaml CHANGELOG.md
-          git commit -m "chore(version): Bump to ${{ steps.extract_version.outputs.version }}"
+          git commit -m "chore(version): Bump to ${{ steps.bump-version.outputs.version }}"
           git push
