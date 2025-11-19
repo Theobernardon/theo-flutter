@@ -1,0 +1,32 @@
+name: Bump Version
+inputs:
+  branch_name:
+    required: true
+outputs:
+  version:
+    description: "nouvelle version après le bump"
+    value: ${{ steps.extract_version.outputs.version }}
+runs:
+  using: composite
+  steps:
+    - id: extract_version
+      shell: bash
+      run: |
+        # Bump the version based on the branch name
+        if ${{ contains( inputs.branch_name , 'release') }}; then
+          echo "Bumping version for release branch"
+          dart pub global run cider bump minor 
+        elif ${{ contains( inputs.branch_name , 'fix') }}; then
+          echo "Bumping version for hotfix branch"
+          dart pub global run cider bump patch 
+        else
+          echo "No version bump needed for this branch"
+          exit 0
+        fi
+
+        # Generate changelog and prepare the release
+        cider release
+
+        # Extract the new version from pubspec.yaml
+        VERSION=$(dart pub global run cider version)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
