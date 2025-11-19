@@ -58,7 +58,7 @@ jobs:
 
       # 2️⃣ - Actions de formatage différentes selon les plates formes
       - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
-        uses: Theobernardon/theo-flutter/.github/actions/pre-steps-spe-platform@v1
+        uses: Theobernardon/theo-flutter/.github/actions/pre-steps-spe-platform@main
         with:
           platform: ${{ matrix.platform }}
           mode: ${{ inputs.mode }}
@@ -82,7 +82,7 @@ jobs:
       # 6️⃣ - Builder l'application pour la plateforme spécifiée
       - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
         id: build
-        uses: Theobernardon/theo-flutter/.github/actions/flutter-build@v1
+        uses: Theobernardon/theo-flutter/.github/actions/flutter-build@main
         with:
           platform: ${{ matrix.platform }}
           mode: ${{ inputs.mode }}
@@ -99,6 +99,6 @@ jobs:
       # 2️⃣ - Archiver les artefacts de la build release
       - name: Archive ${{ matrix.platform }} build artifacts (release only)
         if: ${{ success() && inputs.mode == 'release' }}
-        uses: Theobernardon/theo-flutter/.github/actions/package-builds-release@v1
+        uses: Theobernardon/theo-flutter/.github/actions/package-builds-release@main
         with:
           platform: ${{ matrix.platform }}
