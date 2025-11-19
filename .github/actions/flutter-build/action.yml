@@ -18,14 +18,18 @@ runs:
       run: |
         # Build et récupère la ligne avec "Built" (unicode OK pour "✓" ou "√")
         OUTPUT=$(flutter build ${{ inputs.platform }} --${{ inputs.mode }} | grep -E '✓ Built|√ Built')
+        echo "Build output: $OUTPUT"
 
         # Récupérer la 3e colonne comme chemin
         BUILT_PATH=$(echo "$OUTPUT" | awk '{print $3}')
+        echo "Built path: $BUILT_PATH"
         # Optionnel : convertir \ en / pour compatibilité bash
         BUILT_PATH_CLEAN=$(echo "$BUILT_PATH" | sed 's|\\|/|g')
+        echo "Cleaned built path: $BUILT_PATH_CLEAN"
 
         # Extraire le dossier parent
         PARENT_DIR=$(dirname "$BUILT_PATH_CLEAN")
+        echo "Parent directory: $PARENT_DIR"
 
         # Enregistrer le chemin parent dans les outputs et l'environnement GitHub
         echo "parent-dir=$PARENT_DIR" >> "$GITHUB_OUTPUT"
