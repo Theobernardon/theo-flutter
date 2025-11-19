@@ -1,6 +1,6 @@
 name: Bump Version
 inputs:
-  bump:
+  branch_name:
     description: "major, minor, patch, build, pre(avant-première), breaking (y->0.y.z et x->x.y.z), release"
     required: true
 outputs:
@@ -10,7 +10,24 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: extract_version
+    - name: bump en fonction de branch_name
+      run: |
+        if ${{ contains( inputs.branch_name , 'release') }}; then
+          echo "Bumping version for release branch"
+          dart pub global run cider bump minor 
+        elif ${{ contains( inputs.branch_name , 'fix') }}; then
+          echo "Bumping version for fix branch"
+          dart pub global run cider bump patch 
+        elif ${{ contains( inputs.branch_name , 'feature') }}; then
+          echo "Bumping version for feature branch"
+          dart pub global run cider bump build 
+        else
+          echo "No version bump needed for this branch"
+          exit 0
+        fi
+
+    - name: Bump version
+      id: extract_version
       shell: bash
       run: dart pub global run cider bump ${{ inputs.bump }}
 
