@@ -12,7 +12,7 @@ runs:
     #### Installer les dépendances nécessaires pour Linux si on build sur Linux ####
     - name: Installer les dépendances Linux
       shell: bash
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+      if: ${{ inputs.platform == 'linux' && inputs.mode == 'release'}}
       run: |
         sudo apt-get update
         sudo apt-get install -y libgtk-3-dev libglib2.0-dev

@@ -52,35 +52,29 @@ jobs:
     name: ${{ matrix.platform }} (${{ inputs.mode }})
     steps:
       #### Partie 1 : Préparation ####
-      # 1️⃣ - Cloner ton code source
-      - name: Checkout code
+      - name: 1️⃣ - Cloner ton code source
         uses: actions/checkout@v4
 
-      # 2️⃣ - Actions de formatage différentes selon les plates formes
-      - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
+      - name: 2️⃣ - Actions de formatage pour ${{ matrix.platform }} (${{ inputs.mode }})
         uses: Theobernardon/theo-flutter/.github/actions/pre-steps-spe-platform@main
         with:
           platform: ${{ matrix.platform }}
           mode: ${{ inputs.mode }}
 
-      # 3️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
-      - name: Set up Flutter
+      - name: 3️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
         uses: subosito/flutter-action@v2
         with:
           channel: stable # Utilise le canal stable pour la version de Flutter
           flutter-version-file: pubspec.yaml
           cache: true # Active le cache pub + flutter automatiquement
 
-      # 4️⃣ - Récupérer les dépendances Dart/Flutter
-      - name: Installer les dépendances flutter
+      - name: 4️⃣ - Installer les dépendances flutter
         run: flutter pub get
 
-      # 5️⃣ - Automatisation de la création des icônes par flutter_launcher_icons
-      - name: Création des icônes
+      - name: 5️⃣ - Création des icônes
         run: dart run flutter_launcher_icons
 
-      # 6️⃣ - Builder l'application pour la plateforme spécifiée
-      - name: Build for ${{ matrix.platform }} (${{ inputs.mode }})
+      - name: 6️⃣ - Build pour ${{ matrix.platform }} (${{ inputs.mode }})
         id: build
         uses: Theobernardon/theo-flutter/.github/actions/flutter-build@main
         with:
@@ -88,17 +82,16 @@ jobs:
           mode: ${{ inputs.mode }}
 
       #### Partie 2 : Archiver les artefacts ####
-      # 1️⃣ - Archiver les artefacts de la build debug
-      - name: Archive ${{ matrix.platform }} build artifacts (debug only)
+      - name: 7️⃣ - Archive ${{ matrix.platform }} build artifacts (debug only)
         if: ${{ success() && inputs.mode == 'debug' }}
         uses: actions/upload-artifact@v4
         with:
           name: flutter-build-${{ matrix.platform }}
           path: ${{ steps.build.outputs.parent-dir }} # Chemin du dossier parent du build
 
-      # 2️⃣ - Archiver les artefacts de la build release
-      - name: Archive ${{ matrix.platform }} build artifacts (release only)
+      - name: 7️⃣ - Archive ${{ matrix.platform }} build artifacts (release only)
         if: ${{ success() && inputs.mode == 'release' }}
         uses: Theobernardon/theo-flutter/.github/actions/package-builds-release@main
         with:
           platform: ${{ matrix.platform }}
+          path: ${{ steps.build.outputs.parent-dir }} # Chemin du dossier parent du build

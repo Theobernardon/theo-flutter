@@ -10,29 +10,23 @@ jobs:
     # Définit les systèmes d'exploitation sur lesquels exécuter le job
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ - Cloner ton code source
-      - name: "Checkout code"
+      - name: 1️⃣ - Cloner code source
         uses: actions/checkout@v4
 
-      # 2️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
-      - name: Set up Flutter
+      - name: 2️⃣ - Installer Flutter avec pubspec.yaml, et cache automatique
         uses: subosito/flutter-action@v2
         with:
           flutter-version-file: pubspec.yaml
           cache: true # Active le cache pub + flutter automatiquement
 
-      # 3️⃣ - Récupérer les dépendances Dart/Flutter
-      - name: "Install dependencies"
+      - name: 3️⃣ - Récupérer les dépendances Dart/Flutter
         run: flutter pub get
 
-      # 4️⃣ - Vérifiez que le code est proprement formaté
-      - name: "Format code"
+      - name: 4️⃣ - Vérifiez que le code est proprement formaté
         run: dart format --set-exit-if-changed .
 
-      # 5️⃣ - Vérifier que le code est propre (analyse statique)
-      - name: "Analyze code"
+      - name: 5️⃣ - Vérifier que le code est propre (analyse statique)
         run: flutter analyze
 
-      # 6️⃣ - Exécuter les tests unitaires
-      - name: "Run tests"
+      - name: 6️⃣ - Exécuter les tests unitaires
         run: flutter test

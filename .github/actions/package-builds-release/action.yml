@@ -3,6 +3,9 @@ inputs:
   platform:
     required: true
     description: "Plateforme cible"
+  path:
+    required: true
+    description: "Chemin du dossier parent du build"
 runs:
   using: composite
   steps:
@@ -13,16 +16,20 @@ runs:
       run: choco install innosetup -y
 
     - name: Format repo name for setup file name (Windows)
+      if: ${{ inputs.platform == 'windows' }}
       id: format_name
       shell: pwsh
       run: |
         $repoName = "${{ github.event.repository.name }}"
+
         # Remplacer tout caractère non-alphanumérique par espace
         $tmp = ($repoName -replace '[^a-zA-Z0-9]', ' ')
+
         # Uppercase chaque "mot" et tout coller sans espace
         $safeName = ($tmp -split ' ' | ForEach-Object { if ($_.Length -gt 0) { $_.Substring(0,1).ToUpper() + $_.Substring(1).ToLower() } }) -join ''
         $setupName = "Setup$($safeName)"
         echo "setup_name=$setupName" >> $env:GITHUB_OUTPUT
+        echo "Formatted setup name: $setupName"
 
     - name: Create Installer (Windows)
       if: ${{ inputs.platform == 'windows' }}
@@ -41,6 +48,7 @@ runs:
       if: ${{ inputs.platform == 'linux' }}
       shell: bash
       run: tar -czf flutter-linux.tar.gz -C build/linux/x64/release/bundle .
+
     - name: Upload Linux artifact (Linux)
       if: ${{ inputs.platform == 'linux' }}
       uses: actions/upload-artifact@v4
@@ -48,10 +56,16 @@ runs:
         name: flutter-build-linux
         path: flutter-linux.tar.gz
 
+    # Packaging APK
+    - name: Archive APK bundle (APK)
+      if: ${{ inputs.platform == 'apk' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-build-apk
+        path:  ${{ inputs.path }}
+
     # Packaging MacOS
     # todo: Ajouter les étapes de packaging pour MacOS
-    # Packaging APK
-    # todo: Ajouter les étapes de packaging pour APK
     # Packaging iOS
     # todo: Ajouter les étapes de packaging pour iOS
     # Packaging Web
