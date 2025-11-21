@@ -6,7 +6,7 @@ on:
       platforms:
         required: true
         type: string
-        description: "Liste des plateformes à builder (ex: '[\"linux\", \"windows\"]')"
+        description: 'Liste des plateformes à builder (ex: ''["linux", "windows"]'')'
       version:
         required: true
         type: string
@@ -15,7 +15,7 @@ on:
         required: true
         description: "Token d'authentification pour GitHub Actions"
 
-jobs:  
+jobs:
   matrix:
     strategy:
       matrix:
@@ -39,8 +39,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: Release ${{ inputs.version }}
-          tag_name: ${{ inputs.version }}
+          name: Release v${{ inputs.version }}
+          tag_name: v${{ inputs.version }}
           files: artifacts/flutter-build-${{ matrix.platform }}/**
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
