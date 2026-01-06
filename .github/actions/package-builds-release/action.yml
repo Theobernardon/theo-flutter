@@ -68,6 +68,15 @@ runs:
         path: ${{ inputs.path }}
         retention-days: 1
 
+    # Packaging App Bundle
+    - name: Archive App Bundle (AppBundle)
+      if: ${{ inputs.platform == 'appbundle' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-build-appbundle
+        path: ${{ inputs.path }}
+        retention-days: 1
+
     # Packaging MacOS
     # todo: Ajouter les étapes de packaging pour MacOS
     # Packaging iOS
