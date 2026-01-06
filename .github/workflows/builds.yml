@@ -12,6 +12,11 @@ on:
         required: true
         type: string
         description: "release ou debug"
+      retention-days:
+        required: false
+        type: number
+        default: 3 # Par défaut, les artefacts debug sont gardés 3 jours
+        description: "Nombre de jours de conservation des artefacts"
 
 jobs:
   matrix:
@@ -88,6 +93,7 @@ jobs:
         with:
           name: flutter-build-${{ matrix.platform }}
           path: ${{ steps.build.outputs.parent-dir }} # Chemin du dossier parent du build
+          retention-days: ${{ inputs.retention-days }}
 
       - name: 7️⃣ - Archive ${{ matrix.platform }} build artifacts (release only)
         if: ${{ success() && inputs.mode == 'release' }}

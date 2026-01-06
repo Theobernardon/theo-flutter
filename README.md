@@ -1,6 +1,14 @@
-# Générateur de projet Flutter
+# Générateur de projet Flutter + Workflows CI/CD
 
-Ce dépôt contient **`new_flutter_project.ipynb`**, un notebook Jupyter permettant d’automatiser la création et la configuration d’un nouveau projet Flutter.
+Ce dépôt contient :
+
+1. **`new_flutter_project.ipynb`** : Notebook Jupyter pour créer et configurer un nouveau projet Flutter
+2. **Workflows GitHub Actions réutilisables** : CI/CD optimisés pour Flutter (builds, tests, releases)
+3. **Documentation complète**: guides d’utilisation et détails techniques
+
+---
+
+## 🎨 Générateur de Projet Flutter
 
 Les diagrammes présents dans [`_Document`](./_Document) illustrent l’organisation GitHub/Git adoptée et la place de ce générateur dans la gestion de projet.
 
