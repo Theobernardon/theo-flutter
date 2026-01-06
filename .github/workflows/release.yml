@@ -1,4 +1,4 @@
-name: Release Flutter Workflow Réutilisable
+name: Release Builds
 
 on:
   workflow_call:
