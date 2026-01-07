@@ -117,7 +117,7 @@ jobs:
 
       - name: pre6️⃣bis - Configuration de la signature personnalisée
         if: ${{ (matrix.platform == 'apk' || matrix.platform == 'appbundle') && inputs.mode == 'release' && steps.check-signing.outputs.has-custom-signing == 'true' }}
-        uses: Theobernardon/theo-flutter/.github/actions/setup-sign@main
+        uses: Theobernardon/theo-flutter/.github/actions/setup-sing@main
         with:
           keystore_base64: ${{ secrets.KEYSTORE_BASE64 }}
           keystore_password: ${{ secrets.KEYSTORE_PASSWORD }}
