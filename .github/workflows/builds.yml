@@ -1,5 +1,8 @@
 name: Builder Flutter Workflow Réutilisable
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
     # Map the workflow outputs to job outputs
@@ -17,6 +20,19 @@ on:
         type: number
         default: 3 # Par défaut, les artefacts debug sont gardés 3 jours
         description: "Nombre de jours de conservation des artefacts"
+    secrets:
+      KEYSTORE_BASE64:
+        required: false
+        description: "Keystore Android encodé en base64 (requis pour APK release)"
+      KEYSTORE_PASSWORD:
+        required: false
+        description: "Mot de passe du keystore"
+      KEY_ALIAS:
+        required: false
+        description: "Alias de la clé"
+      KEY_PASSWORD:
+        required: false
+        description: "Mot de passe de la clé"
 
 jobs:
   matrix:
@@ -82,6 +98,31 @@ jobs:
 
       - name: 5️⃣ - Création des icônes
         run: dart run flutter_launcher_icons
+
+      # 🔐 NOUVELLE ÉTAPE : Signature APK (seulement pour APK en mode release)
+      - name: pre6️⃣ - Vérifier la disponibilité de la signature personnalisée
+        if: ${{ (matrix.platform == 'apk' || matrix.platform == 'appbundle') && inputs.mode == 'release' }}
+        id: check-signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "${KEYSTORE_BASE64}" ]; then
+            echo "✅ Signature personnalisée détectée - Utilisation du keystore fourni"
+            echo "has-custom-signing=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Aucune signature personnalisée - Utilisation de la signature par défaut (debug keystore)"
+            echo "ℹ️ Pour une vraie release production, configurez les secrets : KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD"
+            echo "has-custom-signing=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: pre6️⃣bis - Configuration de la signature personnalisée
+        if: ${{ (matrix.platform == 'apk' || matrix.platform == 'appbundle') && inputs.mode == 'release' && steps.check-signing.outputs.has-custom-signing == 'true' }}
+        uses: Theobernardon/theo-flutter/.github/actions/setup-sign@main
+        with:
+          keystore_base64: ${{ secrets.KEYSTORE_BASE64 }}
+          keystore_password: ${{ secrets.KEYSTORE_PASSWORD }}
+          key_alias: ${{ secrets.KEY_ALIAS }}
+          key_password: ${{ secrets.KEY_PASSWORD }}
 
       - name: 6️⃣ - Build pour ${{ matrix.platform }} (${{ inputs.mode }})
         id: build

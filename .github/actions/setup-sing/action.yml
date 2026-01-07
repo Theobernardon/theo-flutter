@@ -1,0 +1,79 @@
+name: Sign Android APK
+description: "Signe l'APK Android avec le keystore fourni via les secrets GitHub"
+inputs:
+  keystore_base64:
+    description: "Keystore encodé en base64"
+    required: true
+  keystore_password:
+    description: "Mot de passe du keystore"
+    required: true
+  key_alias:
+    description: "Alias de la clé"
+    required: true
+  key_password: 
+    description: "Mot de passe de la clé"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Créer le dossier de configuration Android
+      shell: bash
+      run: mkdir -p android/
+
+    - name: Décoder et créer le keystore
+      shell: bash
+      env:
+        KEYSTORE_BASE64: ${{ inputs.keystore_base64 }}
+      run: |
+        echo "${KEYSTORE_BASE64}" | base64 --decode > android/upload-keystore.jks
+        # Vérifier que le fichier a été créé
+        if [ ! -f android/upload-keystore.jks ]; then
+          echo "❌ Erreur : Le keystore n'a pas été créé"
+          exit 1
+        fi
+        echo "✅ Keystore créé avec succès"
+
+    - name: Créer le fichier key.properties
+      shell: bash
+      env:
+        KEYSTORE_PASSWORD: ${{ inputs.keystore_password }}
+        KEY_PASSWORD: ${{ inputs.key_password }}
+        KEY_ALIAS: ${{ inputs.key_alias }}
+      run: |
+        cat > android/key.properties << EOF
+        storePassword=${KEYSTORE_PASSWORD}
+        keyPassword=${KEY_PASSWORD}
+        keyAlias=${KEY_ALIAS}
+        storeFile=upload-keystore.jks
+        EOF
+        echo "✅ Fichier key.properties créé"
+
+    - name: Configurer build.gradle pour la signature
+      shell: bash
+      run: |
+        # Backup du fichier original
+        cp android/app/build.gradle android/app/build.gradle.backup
+        
+        # Vérifier si la configuration de signature existe déjà
+        if ! grep -q "signingConfigs" android/app/build.gradle; then
+          echo "📝 Ajout de la configuration de signature"
+          
+          # Insérer la configuration de signature (compatible Linux et macOS avec Perl)
+          perl -i -pe 's/(android \{)/\1\n    def keystoreProperties = new Properties()\n    def keystorePropertiesFile = rootProject.file("key.properties")\n    if (keystorePropertiesFile.exists()) {\n        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))\n    }\n\n    signingConfigs {\n        release {\n            keyAlias keystoreProperties["keyAlias"]\n            keyPassword keystoreProperties["keyPassword"]\n            storeFile file(keystoreProperties["storeFile"])\n            storePassword keystoreProperties["storePassword"]\n        }\n    }/' android/app/build.gradle
+          
+          # Ajouter signingConfig dans buildTypes
+          perl -i -pe 's/(buildTypes \{.*?release \{)/\1\n            signingConfig signingConfigs.release/s' android/app/build.gradle
+          
+          echo "✅ Configuration de signature ajoutée"
+        else
+          echo "ℹ️ Configuration de signature déjà présente"
+        fi
+
+    - name: Nettoyer les fichiers sensibles
+      if: always()
+      shell: bash
+      run: |
+        rm -f android/upload-keystore.jks
+        rm -f android/key.properties
+        rm -f android/app/build.gradle.backup
+        echo "🧹 Fichiers sensibles supprimés"
