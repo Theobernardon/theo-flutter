@@ -16,6 +16,15 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Enregistrer le nettoyage post-job
+      uses: gacts/run-and-post-run@v1
+      with:
+        run: echo "📝 Nettoyage post-job enregistré"
+        post: |
+          rm -f android/app/upload-keystore.jks
+          rm -f android/key.properties
+          echo "🧹 Fichiers sensibles supprimés (post-job)"
+
     - name: Créer le dossier de configuration Android
       shell: bash
       run: mkdir -p android/app/
@@ -47,11 +56,3 @@ runs:
         storeFile=upload-keystore.jks
         EOF
         echo "✅ Fichier key.properties créé"
-
-    - name: Nettoyer les fichiers sensibles
-      if: always()
-      shell: bash
-      run: |
-        rm -f android/app/upload-keystore.jks
-        rm -f android/key.properties
-        echo "🧹 Fichiers sensibles supprimés"
