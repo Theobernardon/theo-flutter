@@ -99,6 +99,22 @@ jobs:
       - name: 5️⃣ - Création des icônes
         run: dart run flutter_launcher_icons
 
+      - name: 🔎 Debug signature context
+        if: ${{ (matrix.platform == 'apk' || matrix.platform == 'appbundle') && inputs.mode == 'release' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          echo "GITHUB_ACTOR: $GITHUB_ACTOR"
+          echo "PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || 'N/A' }}"
+          echo "PR_HEAD_IS_FORK: ${{ github.event.pull_request.head.repo.fork || 'N/A' }}"
+          if [ -n "${KEYSTORE_BASE64}" ]; then
+            echo "KEYSTORE: present"
+          else
+            echo "KEYSTORE: empty (probable fork or missing secret)"
+          fi
+
       # 🔐 NOUVELLE ÉTAPE : Signature APK (seulement pour APK en mode release)
       - name: pre6️⃣ - Vérifier la disponibilité de la signature personnalisée
         if: ${{ (matrix.platform == 'apk' || matrix.platform == 'appbundle') && inputs.mode == 'release' }}
