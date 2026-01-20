@@ -1,16 +1,16 @@
 name: Sign Android APK
 description: "Signe l'APK Android avec le keystore fourni via les secrets GitHub"
-inputs:
-  keystore_base64:
+secrets:
+  KEYSTORE_BASE64:
     description: "Keystore encodé en base64"
     required: true
-  keystore_password:
+  KEYSTORE_PASSWORD:
     description: "Mot de passe du keystore"
     required: true
-  key_alias:
+  KEY_ALIAS:
     description: "Alias de la clé"
     required: true
-  key_password: 
+  KEY_PASSWORD:
     description: "Mot de passe de la clé"
     required: true
 runs:
@@ -23,7 +23,7 @@ runs:
     - name: Décoder et créer le keystore
       shell: bash
       env:
-        KEYSTORE_BASE64: ${{ inputs.keystore_base64 }}
+        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
       run: |
         echo "${KEYSTORE_BASE64}" | base64 --decode > android/upload-keystore.jks
         # Vérifier que le fichier a été créé
@@ -36,9 +36,9 @@ runs:
     - name: Créer le fichier key.properties
       shell: bash
       env:
-        KEYSTORE_PASSWORD: ${{ inputs.keystore_password }}
-        KEY_PASSWORD: ${{ inputs.key_password }}
-        KEY_ALIAS: ${{ inputs.key_alias }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
       run: |
         cat > android/key.properties << EOF
         storePassword=${KEYSTORE_PASSWORD}
@@ -53,7 +53,7 @@ runs:
       run: |
         # Backup du fichier original
         cp android/app/build.gradle android/app/build.gradle.backup
-        
+
         # Vérifier si la configuration de signature existe déjà
         if ! grep -q "signingConfigs" android/app/build.gradle; then
           echo "📝 Ajout de la configuration de signature"
