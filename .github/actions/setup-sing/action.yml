@@ -1,16 +1,16 @@
 name: Sign Android APK
 description: "Signe l'APK Android avec le keystore fourni via les secrets GitHub"
-secrets:
-  KEYSTORE_BASE64:
+inputs:
+  keystore_base64:
     description: "Keystore encodé en base64"
     required: true
-  KEYSTORE_PASSWORD:
+  keystore_password:
     description: "Mot de passe du keystore"
     required: true
-  KEY_ALIAS:
+  key_alias:
     description: "Alias de la clé"
     required: true
-  KEY_PASSWORD:
+  key_password:
     description: "Mot de passe de la clé"
     required: true
 runs:
@@ -23,7 +23,7 @@ runs:
     - name: Décoder et créer le keystore
       shell: bash
       env:
-        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        KEYSTORE_BASE64: ${{ inputs.keystore_base64 }}
       run: |
         echo "${KEYSTORE_BASE64}" | base64 --decode > android/upload-keystore.jks
         # Vérifier que le fichier a été créé
@@ -36,9 +36,9 @@ runs:
     - name: Créer le fichier key.properties
       shell: bash
       env:
-        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEYSTORE_PASSWORD: ${{ inputs.keystore_password }}
+        KEY_PASSWORD: ${{ inputs.key_password }}
+        KEY_ALIAS: ${{ inputs.key_alias }}
       run: |
         cat > android/key.properties << EOF
         storePassword=${KEYSTORE_PASSWORD}
