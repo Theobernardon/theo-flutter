@@ -1,4 +1,5 @@
 name: Actions de formatage
+description: "Effectue des étapes préalables spécifiques à la plateforme avant la construction de l'application Flutter"
 inputs:
   platform:
     description: "Plateforme cible"

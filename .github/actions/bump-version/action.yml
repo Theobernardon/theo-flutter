@@ -1,4 +1,5 @@
 name: Bump Version
+description: "Met à jour la version de l'application en fonction du nom de la branche"
 inputs:
   branch_name:
     description: "major, minor, patch, build, pre(avant-première), breaking (y->0.y.z et x->x.y.z), release"
@@ -11,6 +12,7 @@ runs:
   using: composite
   steps:
     - name: bump en fonction de branch_name
+      shell: bash
       run: |
         if ${{ contains( inputs.branch_name , 'release') }}; then
           echo "Bumping version for release branch"

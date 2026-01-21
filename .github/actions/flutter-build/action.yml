@@ -1,4 +1,5 @@
 name: Build Flutter
+description: "Construit l'application Flutter pour la plateforme et le mode spécifiés"
 inputs:
   platform:
     description: "Plateforme cible"
