@@ -28,6 +28,11 @@ jobs:
         with:
           branch_name: ${{ inputs.branch_name }}
 
+      - name: Générer le changelog et préparer la release
+        if: ${{ contains( inputs.branch_name , 'release') }}
+        shell: bash
+        run: dart pub global run cider release
+
       - name: Commit and push version bump
         run: |
           git config user.name "github-actions[bot]"

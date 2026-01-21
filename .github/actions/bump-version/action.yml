@@ -28,11 +28,6 @@ runs:
           exit 0
         fi
 
-    - name: Générer le changelog et préparer la release
-      if: ${{ contains( inputs.branch_name , 'release') }}
-      shell: bash
-      run: cider release
-
     - name: Extract the new version from pubspec.yaml
       shell: bash
       run: |
