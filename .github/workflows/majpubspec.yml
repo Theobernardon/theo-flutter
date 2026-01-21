@@ -10,7 +10,7 @@ on:
 
 jobs:
   bump:
-    if: ${{ contains( inputs.branch_name , 'release') || contains( inputs.branch_name , 'fix') }}
+    if: ${{ contains( inputs.branch_name , 'release') || contains( inputs.branch_name , 'fix') || contains( inputs.branch_name , 'feature') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

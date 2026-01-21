@@ -2,7 +2,7 @@ name: Bump Version
 description: "Met à jour la version de l'application en fonction du nom de la branche"
 inputs:
   branch_name:
-    description: "major, minor, patch, build, pre(avant-première), breaking (y->0.y.z et x->x.y.z), release"
+    description: "Nom de la branche actuelle"
     required: true
 outputs:
   version:
@@ -28,13 +28,8 @@ runs:
           exit 0
         fi
 
-    - name: Bump version
-      id: extract_version
-      shell: bash
-      run: dart pub global run cider bump ${{ inputs.bump }}
-
     - name: Générer le changelog et préparer la release
-      if: ${{ inputs.bump == 'release' }}
+      if: ${{ contains( inputs.branch_name , 'release') }}
       shell: bash
       run: cider release
 
