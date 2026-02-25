@@ -16,13 +16,13 @@ runs:
       run: |
         if ${{ contains( inputs.branch_name , 'release') }}; then
           echo "Bumping version for release branch"
-          dart pub global run cider bump minor 
+          dart pub global run cider bump minor --bump-build
         elif ${{ contains( inputs.branch_name , 'fix') }}; then
           echo "Bumping version for fix branch"
-          dart pub global run cider bump patch 
+          dart pub global run cider bump patch --keep-build
         elif ${{ contains( inputs.branch_name , 'feature') }}; then
           echo "Bumping version for feature branch"
-          dart pub global run cider bump build 
+          dart pub global run cider bump build --keep-build
         else
           echo "No version bump needed for this branch"
           exit 0
